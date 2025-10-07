@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   ArrowRightIcon,
   Bars3Icon,
@@ -42,10 +43,12 @@ const Header = ({ isMenuOpen, toggleMenu }) => {
         </nav>
 
         {}
+        <Link to='/signup/login'>
         <button className="hidden md:flex bg-black hover:bg-gray-800 text-white px-5 py-3 rounded-full font-medium items-center justify-center gap-2 transition-colors">
-          Get Started{" "}
+          Signup/Login{" "}
           <ArrowRightIcon className="h-6 w-6 bg-white rounded-4xl p-1 text-black" />
         </button>
+        </Link>
 
         {}
         <div className="md:hidden">
