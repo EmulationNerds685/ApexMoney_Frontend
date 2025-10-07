@@ -1,6 +1,6 @@
 import React from 'react'
 import {Routes,Route} from 'react-router-dom'
-import { Signup } from '../components/Login/signup'
+import { Signup } from '../components/Signup'
 import Hero from '../components/HeaderHero'
 
 function AppRoute() {
