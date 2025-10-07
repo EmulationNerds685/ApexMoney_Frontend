@@ -8,7 +8,7 @@ function AppRoute() {
     <Routes>
         <Route   path='/' element={<Hero/>}/>
         <Route   path='/signup/login' element={<Signup/>}/>
-
+        
     </Routes>
   )
 }
