@@ -11,9 +11,9 @@ const Header = ({ isMenuOpen, toggleMenu }) => {
         {}
         <div className="flex items-center gap-2">
           <div className="bg-purple-600 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold">
-            T
+            A
           </div>
-          <h1 className="text-xl font-semibold text-gray-900">TruePath</h1>
+          <h1 className="text-xl font-semibold text-gray-900">ApexMoney</h1>
         </div>
 
         {}

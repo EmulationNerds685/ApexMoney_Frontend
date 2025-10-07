@@ -19,7 +19,7 @@ const Hero = () => {
         </h2>
 
         <p className="text-gray-600 mb-8 max-w-md mx-auto md:mx-0">
-          Take control of your money with Savi. Track your spending, save
+          Take control of your money with ApexMoney. Track your spending, save
           smartly — all in one easy-to-use app.
         </p>
 
