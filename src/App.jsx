@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Signup } from "./components/Login/signup";
+
 import { BrowserRouter as Router } from "react-router-dom";
 import AppRoute from "./routes/AppRoute";
 
 import Header from "./components/Header";
-import Hero from './components/HeaderHero'
+
 const App = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleMenu = () => {
