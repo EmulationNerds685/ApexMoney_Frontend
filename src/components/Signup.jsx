@@ -1,60 +1,54 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // Axios ko import karein
+import { useNavigate } from "react-router-dom";
+import axios from 'axios'
+import { useUser } from "../context/UserContext";
 
-// SVG Icon for the logo, matching the purple theme
 const LogoIcon = () => (
   <svg className="w-12 h-12 text-purple-600" viewBox="0 0 24 24" fill="currentColor">
     <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clipRule="evenodd" />
   </svg>
 );
 
-export const Signup=()=> {
+export const Signup = () => {
+  const navigate = useNavigate();
+  const { login, signup } = useUser();
+
   const [isLoginView, setIsLoginView] = useState(true);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({ email: '', password: '' });
+
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleToggleView = () => {
     setIsLoginView(!isLoginView);
-    // Clear fields and messages on toggle
-    setEmail('');
-    setPassword('');
+    setFormData({ email: '', password: '' });
     setError('');
-    setSuccess('');
   };
-  
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError('');
-    setSuccess('');
     setIsLoading(true);
 
-    if (!email || !password) {
-      setError('Email aur password dono zaroori hain.');
-      setIsLoading(false);
-      return;
-    }
-
-    const endpoint = isLoginView ? '/create/login' : '/create/signup';
-    const API_URL = `${import.meta.env.VITE_BACKENDURL}${endpoint}`;
-
     try {
-      // Axios se POST request bhejein. JSON.stringify ki zaroorat nahi.
-      const response = await axios.post(API_URL, {
-        email,
-        password,
-      });
+      if (isLoginView) {
+         const API_URL = `${import.meta.env.VITE_BACKENDURL}/create/login`;
+        const response = await axios.post(API_URL, formData, {
+            withCredentials: true
+         });
 
-      // Success case
-      setSuccess(response.data.message || (isLoginView ? 'Login successful!' : 'Signup successful!'));
-      setEmail('');
-      setPassword('');
+         login(response.data.User);
+      } else {
+        await signup(formData);
+      }
+      navigate('/');
 
     } catch (err) {
-      // Axios error handling alag hota hai. Server ka error message yahan milega.
-      setError(err.response?.data?.message || err.message || 'Kuch galat ho gaya');
+      setError(err.response?.data?.message || err.message || 'An error occurred.');
     } finally {
       setIsLoading(false);
     }
@@ -74,16 +68,17 @@ export const Signup=()=> {
             {isLoginView ? 'Login to continue to ApexMoney' : 'Get started with your financial journey'}
           </p>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <label htmlFor="email" className="text-sm font-medium text-gray-700">Email Address</label>
             <input
               type="email"
               id="email"
-              value={email}
+              name="email"
+              value={formData.email}
               autoComplete='off'
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleChange}
               placeholder="you@example.com"
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-shadow"
               required
@@ -95,9 +90,10 @@ export const Signup=()=> {
             <input
               type="password"
               id="password"
+              name="password"
               autoComplete='new-password'
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formData.password}
+              onChange={handleChange}
               placeholder="••••••••"
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-shadow"
               required
@@ -106,7 +102,6 @@ export const Signup=()=> {
           </div>
 
           {error && <p className="text-sm text-red-600 bg-red-100 p-3 rounded-lg text-center">{error}</p>}
-          {success && <p className="text-sm text-green-600 bg-green-100 p-3 rounded-lg text-center">{success}</p>}
 
           <div>
             <button
@@ -118,7 +113,7 @@ export const Signup=()=> {
             </button>
           </div>
         </form>
-        
+
         <div className="text-center">
           <p className="text-sm text-gray-600">
             {isLoginView ? "Don't have an account?" : 'Already have an account?'}
@@ -134,4 +129,3 @@ export const Signup=()=> {
     </div>
   );
 }
-

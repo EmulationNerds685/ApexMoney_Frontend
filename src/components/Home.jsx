@@ -1,14 +1,16 @@
 import React from "react";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
-import Header from "./Header";
+import Features from "./Features";
+import ChooseUs from "./ChooseUs";
+import HowItWorks from "./HowItWorks";
+import Pricing from "./Pricing";
 
-const Hero = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+
+const Home = () => {
+
 
   return (
+    <>
     <div
       className="min-h-screen flex flex-col"
       style={{
@@ -16,7 +18,7 @@ const Hero = () => {
           "linear-gradient(90deg, rgba(226,185,235,1) 0%, rgba(213,237,237,1) 50%, rgba(215,185,237,1) 100%)",
       }}
     >
-      <Header isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
+      
       <section className="flex flex-col-reverse md:flex-row justify-between items-center flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-12">
         {/* Left Content */}
         <div className="w-full max-w-lg text-center md:text-left mt-10 md:mt-0">
@@ -85,6 +87,12 @@ const Hero = () => {
         </div>
       </section>
     </div>
+    <Features/>
+    <ChooseUs/>
+    <HowItWorks/>
+    <Pricing/>
+    </>
+
   );
 };
-export default Hero;
+export default Home;
