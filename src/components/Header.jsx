@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   ArrowRightIcon,
   Bars3Icon,
@@ -18,12 +19,13 @@ const Header = ({ isMenuOpen, toggleMenu }) => {
 
         {}
         <nav className="hidden md:flex gap-8 text-gray-700 font-medium bg-purple-100 p-3 rounded-4xl">
-          <a
+         <Link to='/'> <a
             href="#"
             className="text-purple-600 hover:text-purple-800 transition"
           >
             Home
           </a>
+          </Link>
           <a href="#" className="hover:text-purple-600 transition">
             About
           </a>
@@ -42,10 +44,12 @@ const Header = ({ isMenuOpen, toggleMenu }) => {
         </nav>
 
         {}
+        <Link to='/signup/login'>
         <button className="hidden md:flex bg-black hover:bg-gray-800 text-white px-5 py-3 rounded-full font-medium items-center justify-center gap-2 transition-colors">
-          Get Started{" "}
+          Signup/Login{" "}
           <ArrowRightIcon className="h-6 w-6 bg-white rounded-4xl p-1 text-black" />
         </button>
+        </Link>
 
         {}
         <div className="md:hidden">
@@ -67,7 +71,7 @@ const Header = ({ isMenuOpen, toggleMenu }) => {
       {isMenuOpen && (
         <div className="md:hidden bg-white/95 backdrop-blur-md w-full max-w-7xl mx-auto rounded-xl shadow-lg z-10 mt-2">
           <nav className="flex flex-col items-center gap-6 text-gray-700 font-medium py-6">
-            <a href="#" className="hover:text-purple-600 transition">Home</a>
+           <Link to='/'> <a href="#" className="hover:text-purple-600 transition">Home</a></Link>
             <a href="#" className="hover:text-purple-600 transition">About</a>
             <a href="#" className="hover:text-purple-600 transition">Services</a>
             <a href="#" className="hover:text-purple-600 transition">Tools</a>
