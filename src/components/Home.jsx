@@ -4,7 +4,7 @@ import Features from "./Features";
 import ChooseUs from "./ChooseUs";
 import HowItWorks from "./HowItWorks";
 import Pricing from "./Pricing";
-
+import {Link} from 'react-router-dom'
 
 const Home = () => {
 
@@ -36,10 +36,10 @@ const Home = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-            <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-full font-medium flex items-center justify-center gap-2 transition-colors">
-              Download Apps{" "}
+            <Link to='/expense'><button className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-full font-medium flex items-center justify-center gap-2 transition-colors">
+              Expense
               <ArrowRightIcon className="h-6 w-6 bg-white rounded-4xl p-1 text-black" />
-            </button>
+            </button></Link>
             <button className="border border-indigo-600 text-indigo-600 hover:bg-indigo-50 px-5 py-3 rounded-full font-medium transition-colors">
               Explore our services
             </button>
