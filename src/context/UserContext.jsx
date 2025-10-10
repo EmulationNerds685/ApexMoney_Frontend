@@ -32,7 +32,7 @@ export const UserProvider = ({ children }) => {
       withCredentials: true,
     });
 
-    setUser(res.data.user);
+    setUser(res.data.User);
   };
 
   const login = (userData) => {

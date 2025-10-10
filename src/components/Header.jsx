@@ -7,6 +7,7 @@ import {
 } from "@heroicons/react/24/outline";
 
 import { useUser } from "../context/UserContext";
+import { Logout } from "./Logout";
 
 const Header = ({ isMenuOpen, toggleMenu }) => {
 
@@ -54,13 +55,9 @@ const Header = ({ isMenuOpen, toggleMenu }) => {
             <div className="h-12 w-24 rounded-full bg-gray-200 animate-pulse" />
           ) : user ? (
 
-            <Link to='/profile'>
-              <div
-                className="h-12 w-12 flex items-center justify-center rounded-full bg-purple-600 text-white font-bold text-xl hover:bg-purple-700 transition-colors"
-                title={`Logged in as ${user.email}`}
-              >
-                {user.email && user.email[0].toUpperCase()}
-              </div>
+            <Link to='/'>
+                {<Logout/>}
+              
             </Link>
           ) : (
 
