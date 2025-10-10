@@ -12,7 +12,7 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get(`${api_url}/create/session`, {
+        const res = await axios.get(`${api_url}/user/session`, {
           withCredentials: true,
         });
 
@@ -28,7 +28,7 @@ export const UserProvider = ({ children }) => {
   }, [api_url]);
 
   const signup = async (userData) => {
-    const res = await axios.post(`${api_url}/create/signup`, userData, {
+    const res = await axios.post(`${api_url}/user/signup`, userData, {
       withCredentials: true,
     });
 
@@ -39,7 +39,7 @@ export const UserProvider = ({ children }) => {
     setUser(userData);
   };
   const logout = async () => {
-    await axios.post(`${api_url}/create/logout`, null, {
+    await axios.post(`${api_url}/user/logout`, null, {
       withCredentials: true,
     });
     setUser(null);

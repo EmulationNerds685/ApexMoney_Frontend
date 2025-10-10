@@ -36,7 +36,7 @@ export const Signup = () => {
 
     try {
       if (isLoginView) {
-         const API_URL = `${import.meta.env.VITE_BACKENDURL}/create/login`;
+         const API_URL = `${import.meta.env.VITE_BACKENDURL}/user/login`;
         const response = await axios.post(API_URL, formData, {
             withCredentials: true
          });

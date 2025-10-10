@@ -43,7 +43,7 @@ export function AddExpenseForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post(`${backend}/api/add`, {
+      const response = await axios.post(`${backend}/expense/add`, {
         userId: user._id,
         ...formData,
         amount: parseFloat(formData.amount),

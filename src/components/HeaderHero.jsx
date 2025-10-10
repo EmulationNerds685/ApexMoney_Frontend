@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   ArrowRightIcon,
   
@@ -28,9 +29,11 @@ const Hero = () => {
             Download Apps{" "}
             <ArrowRightIcon className="h-6 w-6 bg-white rounded-4xl p-1 text-black" />
           </button>
+          <Link to='/income'>
           <button className="border border-indigo-600 text-indigo-600 hover:bg-indigo-50 px-5 py-3 rounded-full font-medium transition-colors">
-            Explore our services
+            Add your Personal Income
           </button>
+          </Link>
         </div>
 
         <div className="mt-10">

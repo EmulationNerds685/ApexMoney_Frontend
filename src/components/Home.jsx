@@ -37,12 +37,14 @@ const Home = () => {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
             <Link to='/expense'><button className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-full font-medium flex items-center justify-center gap-2 transition-colors">
-              Expense
+              Add Expense
               <ArrowRightIcon className="h-6 w-6 bg-white rounded-4xl p-1 text-black" />
             </button></Link>
+            <Link to='/income'>
             <button className="border border-indigo-600 text-indigo-600 hover:bg-indigo-50 px-5 py-3 rounded-full font-medium transition-colors">
-              Explore our services
+              Add your income
             </button>
+            </Link>
           </div>
 
           <div className="mt-10">
