@@ -131,7 +131,7 @@ const Dashboard = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <aside className="relative bottom-6 left-2 w-60 bg-indigo-600 mt-12 text-white flex flex-col py-6 px-4 rounded-2xl shadow-md h-fit">
+      <aside className="relative bottom-6 left-2 w-60 bg-indigo-600 mt-12 text-white flex flex-col py-6 px-4 rounded-2xl shadow-md ">
         <h2 className="text-2xl font-bold mb-8 text-center">Dashboard</h2>
         <nav className="flex flex-col space-y-3">
           <button
