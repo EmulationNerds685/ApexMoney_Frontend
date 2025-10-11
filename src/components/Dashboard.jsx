@@ -254,7 +254,7 @@ const Dashboard = () => {
           <div className="bg-white p-6 rounded-2xl shadow-md">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-indigo-700">Income Data</h2>
-             <Link to='/income'>  <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+             <Link to='/income'>  <button className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
                 + Add Income
               </button></Link>
             </div>
@@ -267,7 +267,7 @@ const Dashboard = () => {
           <div className="bg-white p-6 rounded-2xl shadow-md">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-indigo-700">Expense Data</h2>
-             <Link to='/expense'> <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+             <Link to='/expense'> <button className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
                 + Add Expense
               </button></Link>
             </div>
