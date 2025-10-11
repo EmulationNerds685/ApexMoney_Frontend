@@ -169,124 +169,113 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="flex-1 px-8 py-6">
-        {/* --- NEW: Conditional Rendering Logic --- */}
-        {!loading && expenses.length === 0 && incomes.length === 0 ? (
-          // --- NEW: "No Data Available" View ---
-          <div className="flex flex-col items-center justify-center h-full bg-white p-8 rounded-2xl shadow-md text-center">
-            <h2 className="text-3xl font-bold text-gray-700 mb-4">
-              Welcome, {user?.name || user?.email}!
+        {activeTab === "total" && (
+          <div className="bg-white p-6 rounded-2xl shadow-md">
+            <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+              Welcome, {user?.name || user?.email} 👋
             </h2>
-            <p className="text-gray-500 mb-8 text-lg">
-              No data available to display .
-              <br />
-              Let's get started by adding your first transaction.
-            </p>
-            <div className="flex gap-6">
-              <Link to="/income">
-                <button className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-transform transform hover:scale-105 font-semibold shadow-lg">
-                  + Add Income
-                </button>
-              </Link>
-              <Link to="/expense">
-                <button className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition-transform transform hover:scale-105 font-semibold shadow-lg">
-                  + Add Expense
-                </button>
-              </Link>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Pie Chart */}
+              <div className="bg-purple-50 p-4 rounded-xl shadow-sm flex justify-center">
+                <div className="w-[80%]">
+                  <h3 className="text-lg font-semibold mb-3 text-center">
+                    Income vs Expense
+                  </h3>
+                  <Pie data={pieData} />
+                </div>
+              </div>
+
+              {/* Bar Chart */}
+              <div className="bg-purple-50 p-4 rounded-xl shadow-sm flex justify-center">
+                <div className="w-[85%]">
+                  <h3 className="text-lg font-semibold mb-3 text-center">
+                    Expense by Category
+                  </h3>
+                  <Bar
+                    data={barData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: true,
+                      aspectRatio: 1.2,
+                      plugins: { legend: { display: false } },
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Line Chart */}
+            <div className="mt-8 bg-purple-50 p-4 rounded-xl shadow-sm flex justify-center">
+              <div className="w-[90%]">
+                <h3 className="text-lg font-semibold mb-3 text-center">
+                  Income Over Time
+                </h3>
+                <Line
+                  data={lineData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: 1.5,
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Summary */}
+            <div className="mt-8 flex justify-around text-center text-gray-800">
+              <div>
+                <h4 className="font-semibold text-green-600 text-xl">
+                  Total Income
+                </h4>
+                <p className="text-2xl font-bold">
+                  ₹{totalIncome.toLocaleString()}
+                </p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-red-600 text-xl">
+                  Total Expense
+                </h4>
+                <p className="text-2xl font-bold">
+                  ₹{totalExpense.toLocaleString()}
+                </p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-indigo-600 text-xl">
+                  Net Savings
+                </h4>
+                <p className="text-2xl font-bold">
+                  ₹{(totalIncome - totalExpense).toLocaleString()}
+                </p>
+              </div>
             </div>
           </div>
-        ) : (
-          // --- Original Chart View (renders if data exists) ---
-          <>
-            {activeTab === "total" && (
-              <div className="bg-white p-6 rounded-2xl shadow-md">
-                <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
-                  Welcome, {user?.name || user?.email} 👋
-                </h2>
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div className="bg-purple-50 p-4 rounded-xl shadow-sm flex justify-center">
-                    <div className="w-[80%]">
-                      <h3 className="text-lg font-semibold mb-3 text-center">
-                        Income vs Expense
-                      </h3>
-                      <Pie data={pieData} />
-                    </div>
-                  </div>
-                  <div className="bg-purple-50 p-4 rounded-xl shadow-sm flex justify-center">
-                    <div className="w-[85%]">
-                      <h3 className="text-lg font-semibold mb-3 text-center">
-                        Expense by Category
-                      </h3>
-                      <Bar data={barData} options={{ responsive: true }} />
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-8 bg-purple-50 p-4 rounded-xl shadow-sm flex justify-center">
-                  <div className="w-[90%]">
-                    <h3 className="text-lg font-semibold mb-3 text-center">
-                      Income Over Time
-                    </h3>
-                    <Line data={lineData} options={{ responsive: true }} />
-                  </div>
-                </div>
-                <div className="mt-8 flex justify-around text-center text-gray-800">
-                  <div>
-                    <h4 className="font-semibold text-green-600 text-xl">
-                      Total Income
-                    </h4>
-                    <p className="text-2xl font-bold">
-                      ₹{totalIncome.toLocaleString()}
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-red-600 text-xl">
-                      Total Expense
-                    </h4>
-                    <p className="text-2xl font-bold">
-                      ₹{totalExpense.toLocaleString()}
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-indigo-600 text-xl">
-                      Net Savings
-                    </h4>
-                    <p className="text-2xl font-bold">
-                      ₹{(totalIncome - totalExpense).toLocaleString()}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-            {activeTab === "income" && (
-              <div className="bg-white p-6 rounded-2xl shadow-md">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-indigo-700">
-                    Income Data
-                  </h2>
-                  <Link to="/income">
-                    <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
-                      + Add Income
-                    </button>
-                  </Link>
-                </div>
-                <Line data={lineData} />
-              </div>
-            )}
-            {activeTab === "expense" && (
-              <div className="bg-white p-6 rounded-2xl shadow-md">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-indigo-700">
-                    Expense Data
-                  </h2>
-                  <Link to="/expense">
-                    <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
-                      + Add Expense
-                    </button>
-                  </Link>
-                </div>
-                <Bar data={barData} />
-              </div>
-            )}
-          </>
+        )}
+
+        {/* Income Tab */}
+        {activeTab === "income" && (
+          <div className="bg-white p-6 rounded-2xl shadow-md">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-indigo-700">Income Data</h2>
+             <Link to='/income'>  <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+                + Add Income
+              </button></Link>
+            </div>
+            <Line data={lineData} />
+          </div>
+        )}
+
+        {/* Expense Tab */}
+        {activeTab === "expense" && (
+          <div className="bg-white p-6 rounded-2xl shadow-md">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-indigo-700">Expense Data</h2>
+             <Link to='/expense'> <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+                + Add Expense
+              </button></Link>
+            </div>
+            <Bar data={barData} />
+          </div>
         )}
       </main>
     </div>
