@@ -38,11 +38,8 @@ export const Logout = () => {
   }, []);
 
   return (
-    <nav className="bg-white/0 shadow-white px-2  lg:px-4 py-2 rounded-2xl max-w-7xl mx-auto mt-2">
+    <nav className="bg-white/0 shadow-white px-2 lg:px-4 py-2 rounded-2xl max-w-7xl mx-auto mt-2">
       <div className="flex items-center justify-between">
-        {/* Brand */}
-        
-
         {/* User Section */}
         <div className="relative">
           {loading ? (
@@ -58,11 +55,22 @@ export const Logout = () => {
 
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg z-50 py-1 border border-gray-100">
+                  {/* Signed in info */}
                   <div className="px-4 py-2 text-sm text-gray-700 border-b">
                     <p className="text-xs text-gray-500">Signed in as</p>
                     <p className="font-semibold truncate">{user.email}</p>
                   </div>
 
+                  {/* Dashboard Section */}
+                  <Link
+                    to="/dashboard"
+                    onClick={() => setDropdownOpen(false)}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                  >
+                    Dashboard
+                  </Link>
+
+                  {/* Logout Button */}
                   <button
                     onClick={handleLogout}
                     className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
