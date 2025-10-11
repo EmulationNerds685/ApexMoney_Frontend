@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useUser } from "../context/UserContext";
 import { Bar, Pie, Line } from "react-chartjs-2";
-import {Link} from 'react-router-dom'
+import { Link } from "react-router-dom";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -33,7 +33,7 @@ const Dashboard = () => {
   const [expenses, setExpenses] = useState([]);
   const [incomes, setIncomes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("total"); // 'total', 'income', or 'expense'
+  const [activeTab, setActiveTab] = useState("total");
 
   useEffect(() => {
     if (!user) return;
@@ -69,22 +69,8 @@ const Dashboard = () => {
     fetchData();
   }, [user]);
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-60 text-gray-500 text-lg">
-        Loading dashboard...
-      </div>
-    );
-  }
-
-  if (!expenses.length && !incomes.length) {
-    return (
-      <div className="flex justify-center items-center h-96 text-gray-500 text-lg">
-        No transaction data available yet.
-      </div>
-    );
-  }
-
+  // --- Chart Data Preparation (Moved up for clarity) ---
+  // This data is only used if there are transactions, but it's safe to define here.
   const totalIncome = incomes.reduce((sum, t) => sum + (t.amount || 0), 0);
   const totalExpense = expenses.reduce((sum, t) => sum + (t.amount || 0), 0);
 
@@ -131,15 +117,28 @@ const Dashboard = () => {
     ],
   };
 
+  // --- Main Render Logic ---
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen text-gray-500 text-lg">
+        Loading dashboard...
+      </div>
+    );
+  }
+
+  // **The main layout is now always rendered**
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <aside className=" relative bottom-6  left-2 w-60 bg-indigo-600 mt-14 text-white flex flex-col py-6 px-4 rounded-2xl shadow-md">
+      <aside className="relative bottom-6 left-2 w-60 bg-indigo-600 mt-12 text-white flex flex-col py-6 px-4 rounded-2xl shadow-md h-fit">
         <h2 className="text-2xl font-bold mb-8 text-center">Dashboard</h2>
         <nav className="flex flex-col space-y-3">
           <button
             className={`py-2 px-4 rounded-lg text-left transition ${
-              activeTab === "total" ? "bg-white text-indigo-600 font-semibold" : "hover:bg-indigo-500"
+              activeTab === "total"
+                ? "bg-white text-indigo-600 font-semibold"
+                : "hover:bg-indigo-500"
             }`}
             onClick={() => setActiveTab("total")}
           >
@@ -147,7 +146,9 @@ const Dashboard = () => {
           </button>
           <button
             className={`py-2 px-4 rounded-lg text-left transition ${
-              activeTab === "income" ? "bg-white text-indigo-600 font-semibold" : "hover:bg-indigo-500"
+              activeTab === "income"
+                ? "bg-white text-indigo-600 font-semibold"
+                : "hover:bg-indigo-500"
             }`}
             onClick={() => setActiveTab("income")}
           >
@@ -155,7 +156,9 @@ const Dashboard = () => {
           </button>
           <button
             className={`py-2 px-4 rounded-lg text-left transition ${
-              activeTab === "expense" ? "bg-white text-indigo-600 font-semibold" : "hover:bg-indigo-500"
+              activeTab === "expense"
+                ? "bg-white text-indigo-600 font-semibold"
+                : "hover:bg-indigo-500"
             }`}
             onClick={() => setActiveTab("expense")}
           >
@@ -166,113 +169,124 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="flex-1 px-8 py-6">
-        {activeTab === "total" && (
-          <div className="bg-white p-6 rounded-2xl shadow-md">
-            <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
-              Welcome, {user?.name || user?.email} 👋
+        {/* --- NEW: Conditional Rendering Logic --- */}
+        {!loading && expenses.length === 0 && incomes.length === 0 ? (
+          // --- NEW: "No Data Available" View ---
+          <div className="flex flex-col items-center justify-center h-full bg-white p-8 rounded-2xl shadow-md text-center">
+            <h2 className="text-3xl font-bold text-gray-700 mb-4">
+              Welcome, {user?.name || user?.email}!
             </h2>
-
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* Pie Chart */}
-              <div className="bg-purple-50 p-4 rounded-xl shadow-sm flex justify-center">
-                <div className="w-[80%]">
-                  <h3 className="text-lg font-semibold mb-3 text-center">
-                    Income vs Expense
-                  </h3>
-                  <Pie data={pieData} />
+            <p className="text-gray-500 mb-8 text-lg">
+              No data available to display charts.
+              <br />
+              Let's get started by adding your first transaction.
+            </p>
+            <div className="flex gap-6">
+              <Link to="/income">
+                <button className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-transform transform hover:scale-105 font-semibold shadow-lg">
+                  + Add Income
+                </button>
+              </Link>
+              <Link to="/expense">
+                <button className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition-transform transform hover:scale-105 font-semibold shadow-lg">
+                  + Add Expense
+                </button>
+              </Link>
+            </div>
+          </div>
+        ) : (
+          // --- Original Chart View (renders if data exists) ---
+          <>
+            {activeTab === "total" && (
+              <div className="bg-white p-6 rounded-2xl shadow-md">
+                <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+                  Welcome, {user?.name || user?.email} 👋
+                </h2>
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div className="bg-purple-50 p-4 rounded-xl shadow-sm flex justify-center">
+                    <div className="w-[80%]">
+                      <h3 className="text-lg font-semibold mb-3 text-center">
+                        Income vs Expense
+                      </h3>
+                      <Pie data={pieData} />
+                    </div>
+                  </div>
+                  <div className="bg-purple-50 p-4 rounded-xl shadow-sm flex justify-center">
+                    <div className="w-[85%]">
+                      <h3 className="text-lg font-semibold mb-3 text-center">
+                        Expense by Category
+                      </h3>
+                      <Bar data={barData} options={{ responsive: true }} />
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-8 bg-purple-50 p-4 rounded-xl shadow-sm flex justify-center">
+                  <div className="w-[90%]">
+                    <h3 className="text-lg font-semibold mb-3 text-center">
+                      Income Over Time
+                    </h3>
+                    <Line data={lineData} options={{ responsive: true }} />
+                  </div>
+                </div>
+                <div className="mt-8 flex justify-around text-center text-gray-800">
+                  <div>
+                    <h4 className="font-semibold text-green-600 text-xl">
+                      Total Income
+                    </h4>
+                    <p className="text-2xl font-bold">
+                      ₹{totalIncome.toLocaleString()}
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-red-600 text-xl">
+                      Total Expense
+                    </h4>
+                    <p className="text-2xl font-bold">
+                      ₹{totalExpense.toLocaleString()}
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-indigo-600 text-xl">
+                      Net Savings
+                    </h4>
+                    <p className="text-2xl font-bold">
+                      ₹{(totalIncome - totalExpense).toLocaleString()}
+                    </p>
+                  </div>
                 </div>
               </div>
-
-              {/* Bar Chart */}
-              <div className="bg-purple-50 p-4 rounded-xl shadow-sm flex justify-center">
-                <div className="w-[85%]">
-                  <h3 className="text-lg font-semibold mb-3 text-center">
-                    Expense by Category
-                  </h3>
-                  <Bar
-                    data={barData}
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: true,
-                      aspectRatio: 1.2,
-                      plugins: { legend: { display: false } },
-                    }}
-                  />
+            )}
+            {activeTab === "income" && (
+              <div className="bg-white p-6 rounded-2xl shadow-md">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-indigo-700">
+                    Income Data
+                  </h2>
+                  <Link to="/income">
+                    <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+                      + Add Income
+                    </button>
+                  </Link>
                 </div>
+                <Line data={lineData} />
               </div>
-            </div>
-
-            {/* Line Chart */}
-            <div className="mt-8 bg-purple-50 p-4 rounded-xl shadow-sm flex justify-center">
-              <div className="w-[90%]">
-                <h3 className="text-lg font-semibold mb-3 text-center">
-                  Income Over Time
-                </h3>
-                <Line
-                  data={lineData}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    aspectRatio: 1.5,
-                  }}
-                />
+            )}
+            {activeTab === "expense" && (
+              <div className="bg-white p-6 rounded-2xl shadow-md">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-indigo-700">
+                    Expense Data
+                  </h2>
+                  <Link to="/expense">
+                    <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+                      + Add Expense
+                    </button>
+                  </Link>
+                </div>
+                <Bar data={barData} />
               </div>
-            </div>
-
-            {/* Summary */}
-            <div className="mt-8 flex justify-around text-center text-gray-800">
-              <div>
-                <h4 className="font-semibold text-green-600 text-xl">
-                  Total Income
-                </h4>
-                <p className="text-2xl font-bold">
-                  ₹{totalIncome.toLocaleString()}
-                </p>
-              </div>
-              <div>
-                <h4 className="font-semibold text-red-600 text-xl">
-                  Total Expense
-                </h4>
-                <p className="text-2xl font-bold">
-                  ₹{totalExpense.toLocaleString()}
-                </p>
-              </div>
-              <div>
-                <h4 className="font-semibold text-indigo-600 text-xl">
-                  Net Savings
-                </h4>
-                <p className="text-2xl font-bold">
-                  ₹{(totalIncome - totalExpense).toLocaleString()}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Income Tab */}
-        {activeTab === "income" && (
-          <div className="bg-white p-6 rounded-2xl shadow-md">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-indigo-700">Income Data</h2>
-             <Link to='/income'>  <button className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
-                + Add Income
-              </button></Link>
-            </div>
-            <Line data={lineData} />
-          </div>
-        )}
-
-        {/* Expense Tab */}
-        {activeTab === "expense" && (
-          <div className="bg-white p-6 rounded-2xl shadow-md">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-indigo-700">Expense Data</h2>
-             <Link to='/expense'> <button className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
-                + Add Expense
-              </button></Link>
-            </div>
-            <Bar data={barData} />
-          </div>
+            )}
+          </>
         )}
       </main>
     </div>
