@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useUser } from "../context/UserContext";
 import { Bar, Pie, Line } from "react-chartjs-2";
+import {Link} from 'react-router-dom'
 import {
   Chart as ChartJS,
   ArcElement,
@@ -32,6 +33,7 @@ const Dashboard = () => {
   const [expenses, setExpenses] = useState([]);
   const [incomes, setIncomes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("total"); // 'total', 'income', or 'expense'
 
   useEffect(() => {
     if (!user) return;
@@ -41,7 +43,6 @@ const Dashboard = () => {
         const expenseRes = await axios.get(
           `${import.meta.env.VITE_BACKENDURL}/expense/get?userId=${user._id}`
         );
-
         const incomeRes = await axios.get(
           `${import.meta.env.VITE_BACKENDURL}/income/get?userId=${user._id}`
         );
@@ -78,7 +79,7 @@ const Dashboard = () => {
 
   if (!expenses.length && !incomes.length) {
     return (
-      <div className="flex  justify-center items-center h-96 text-gray-500 text-lg">
+      <div className="flex justify-center items-center h-96 text-gray-500 text-lg">
         No transaction data available yet.
       </div>
     );
@@ -117,9 +118,7 @@ const Dashboard = () => {
   };
 
   const lineData = {
-    labels: incomes.map((t) =>
-      new Date(t.date).toLocaleDateString("en-IN")
-    ),
+    labels: incomes.map((t) => new Date(t.date).toLocaleDateString("en-IN")),
     datasets: [
       {
         label: "Income Over Time",
@@ -133,77 +132,149 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-w-full mx-auto my-8 mt-10 px-4 py-6 bg-white rounded-2xl shadow-md">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
-        Welcome, {user?.name || user?.email} 👋
-      </h2>
+    <div className="flex min-h-screen bg-gray-50">
+      {/* Sidebar */}
+      <aside className="w-60 bg-indigo-600 text-white flex flex-col py-6 px-4 rounded-r-2xl shadow-md">
+        <h2 className="text-2xl font-bold mb-8 text-center">Dashboard</h2>
+        <nav className="flex flex-col space-y-3">
+          <button
+            className={`py-2 px-4 rounded-lg text-left transition ${
+              activeTab === "total" ? "bg-white text-indigo-600 font-semibold" : "hover:bg-indigo-500"
+            }`}
+            onClick={() => setActiveTab("total")}
+          >
+            Overview
+          </button>
+          <button
+            className={`py-2 px-4 rounded-lg text-left transition ${
+              activeTab === "income" ? "bg-white text-indigo-600 font-semibold" : "hover:bg-indigo-500"
+            }`}
+            onClick={() => setActiveTab("income")}
+          >
+            Income
+          </button>
+          <button
+            className={`py-2 px-4 rounded-lg text-left transition ${
+              activeTab === "expense" ? "bg-white text-indigo-600 font-semibold" : "hover:bg-indigo-500"
+            }`}
+            onClick={() => setActiveTab("expense")}
+          >
+            Expense
+          </button>
+        </nav>
+      </aside>
 
-      <div className="grid md:grid-cols-2 gap-8">
-        {/* Income vs Expense */}
-        <div className="bg-purple-50 p-4 rounded-xl shadow-sm flex justify-center">
-          <div className="w-[80%] md:w-[70%] lg:w-[60%]">
-            <h3 className="text-lg font-semibold mb-3 text-center">
-              Income vs Expense
-            </h3>
-            <Pie data={pieData} />
+      {/* Main Content */}
+      <main className="flex-1 px-8 py-6">
+        {activeTab === "total" && (
+          <div className="bg-white p-6 rounded-2xl shadow-md">
+            <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+              Welcome, {user?.name || user?.email} 👋
+            </h2>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Pie Chart */}
+              <div className="bg-purple-50 p-4 rounded-xl shadow-sm flex justify-center">
+                <div className="w-[80%]">
+                  <h3 className="text-lg font-semibold mb-3 text-center">
+                    Income vs Expense
+                  </h3>
+                  <Pie data={pieData} />
+                </div>
+              </div>
+
+              {/* Bar Chart */}
+              <div className="bg-purple-50 p-4 rounded-xl shadow-sm flex justify-center">
+                <div className="w-[85%]">
+                  <h3 className="text-lg font-semibold mb-3 text-center">
+                    Expense by Category
+                  </h3>
+                  <Bar
+                    data={barData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: true,
+                      aspectRatio: 1.2,
+                      plugins: { legend: { display: false } },
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Line Chart */}
+            <div className="mt-8 bg-purple-50 p-4 rounded-xl shadow-sm flex justify-center">
+              <div className="w-[90%]">
+                <h3 className="text-lg font-semibold mb-3 text-center">
+                  Income Over Time
+                </h3>
+                <Line
+                  data={lineData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: 1.5,
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Summary */}
+            <div className="mt-8 flex justify-around text-center text-gray-800">
+              <div>
+                <h4 className="font-semibold text-green-600 text-xl">
+                  Total Income
+                </h4>
+                <p className="text-2xl font-bold">
+                  ₹{totalIncome.toLocaleString()}
+                </p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-red-600 text-xl">
+                  Total Expense
+                </h4>
+                <p className="text-2xl font-bold">
+                  ₹{totalExpense.toLocaleString()}
+                </p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-indigo-600 text-xl">
+                  Net Savings
+                </h4>
+                <p className="text-2xl font-bold">
+                  ₹{(totalIncome - totalExpense).toLocaleString()}
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Expense by Category */}
-        <div className="bg-purple-50 p-4 rounded-xl shadow-sm flex justify-center">
-          <div className="w-[85%] md:w-[75%] lg:w-[65%]">
-            <h3 className="text-lg font-semibold mb-3 text-center">
-              Expense by Category
-            </h3>
-            <Bar
-              data={barData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: true,
-                aspectRatio: 1.2,
-                plugins: { legend: { display: false } },
-              }}
-            />
+        {/* Income Tab */}
+        {activeTab === "income" && (
+          <div className="bg-white p-6 rounded-2xl shadow-md">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-indigo-700">Income Data</h2>
+             <Link to='/income'>  <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+                + Add Income
+              </button></Link>
+            </div>
+            <Line data={lineData} />
           </div>
-        </div>
-      </div>
+        )}
 
-      {/* Income Over Time */}
-      <div className="mt-8 bg-purple-50 p-4 rounded-xl shadow-sm flex justify-center">
-        <div className="w-[90%] md:w-[80%] lg:w-[70%]">
-          <h3 className="text-lg font-semibold mb-3 text-center">
-            Income Over Time
-          </h3>
-          <Line
-            data={lineData}
-            options={{
-              responsive: true,
-              maintainAspectRatio: true,
-              aspectRatio: 1.5,
-            }}
-          />
-        </div>
-      </div>
-
-      {/* Summary Section */}
-      <div className="mt-8 flex justify-around text-center text-gray-800">
-        <div>
-          <h4 className="font-semibold text-green-600 text-xl">Total Income</h4>
-          <p className="text-2xl font-bold">₹{totalIncome.toLocaleString()}</p>
-        </div>
-        <div>
-          <h4 className="font-semibold text-red-600 text-xl">Total Expense</h4>
-          <p className="text-2xl font-bold">₹{totalExpense.toLocaleString()}</p>
-        </div>
-        <div>
-          <h4 className="font-semibold text-indigo-600 text-xl">
-            Net Savings
-          </h4>
-          <p className="text-2xl font-bold">
-            ₹{(totalIncome - totalExpense).toLocaleString()}
-          </p>
-        </div>
-      </div>
+        {/* Expense Tab */}
+        {activeTab === "expense" && (
+          <div className="bg-white p-6 rounded-2xl shadow-md">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-indigo-700">Expense Data</h2>
+             <Link to='/expense'> <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+                + Add Expense
+              </button></Link>
+            </div>
+            <Bar data={barData} />
+          </div>
+        )}
+      </main>
     </div>
   );
 };
