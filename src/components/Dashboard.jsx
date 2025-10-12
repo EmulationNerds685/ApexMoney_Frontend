@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useUser } from "../context/UserContext";
 import { Bar, Pie, Line } from "react-chartjs-2";
-import { Link, useNavigate } from "react-router-dom"; // Added useNavigate
+import { Link, useNavigate } from "react-router-dom";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -30,7 +30,7 @@ ChartJS.register(
 
 const Dashboard = () => {
   const { user } = useUser();
-  const navigate = useNavigate(); // Added navigate hook
+  const navigate = useNavigate();
   const [expenses, setExpenses] = useState([]);
   const [incomes, setIncomes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -132,6 +132,10 @@ const Dashboard = () => {
     setEditingIncome(null);
   };
 
+  // Calculate totals
+  const totalExpense = expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
+  const totalIncome = incomes.reduce((sum, income) => sum + (income.amount || 0), 0);
+
   // Show loading or redirect if no user
   if (!user) {
     return (
@@ -142,9 +146,6 @@ const Dashboard = () => {
   }
 
   // Chart data preparation
-  const totalIncome = incomes.reduce((sum, t) => sum + (t.amount || 0), 0);
-  const totalExpense = expenses.reduce((sum, t) => sum + (t.amount || 0), 0);
-
   const pieData = {
     labels: ["Income", "Expense"],
     datasets: [
@@ -360,53 +361,67 @@ const Dashboard = () => {
                     No expenses found. Add your first expense!
                   </div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full border-collapse">
-                      <thead>
-                        <tr className="bg-gray-50">
-                          <th className="p-3 text-left font-semibold">Amount</th>
-                          <th className="p-3 text-left font-semibold">Category</th>
-                          <th className="p-3 text-left font-semibold">Date</th>
-                          <th className="p-3 text-left font-semibold">Notes</th>
-                          <th className="p-3 text-left font-semibold">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {expenses.map((expense) => (
-                          <tr key={expense._id} className="border-b hover:bg-gray-50">
-                            <td className="p-3">₹{expense.amount}</td>
-                            <td className="p-3">
-                              <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
-                                {expense.category}
-                              </span>
-                            </td>
-                            <td className="p-3">
-                              {new Date(expense.date).toLocaleDateString("en-IN")}
-                            </td>
-                            <td className="p-3 text-gray-600">
-                              {expense.notes || "-"}
-                            </td>
-                            <td className="p-3">
-                              <div className="flex gap-2">
-                                <button
-                                  onClick={() => handleEditExpense(expense)}
-                                  className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition text-sm"
-                                >
-                                  Edit
-                                </button>
-                                <button
-                                  onClick={() => handleDeleteExpense(expense._id)}
-                                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition text-sm"
-                                >
-                                  Delete
-                                </button>
-                              </div>
-                            </td>
+                  <>
+                    <div className="overflow-x-auto mb-6">
+                      <table className="w-full border-collapse">
+                        <thead>
+                          <tr className="bg-gray-50">
+                            <th className="p-3 text-left font-semibold">Amount</th>
+                            <th className="p-3 text-left font-semibold">Category</th>
+                            <th className="p-3 text-left font-semibold">Date</th>
+                            <th className="p-3 text-left font-semibold">Notes</th>
+                            <th className="p-3 text-left font-semibold">Actions</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        </thead>
+                        <tbody>
+                          {expenses.map((expense) => (
+                            <tr key={expense._id} className="border-b hover:bg-gray-50">
+                              <td className="p-3">₹{expense.amount}</td>
+                              <td className="p-3">
+                                <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
+                                  {expense.category}
+                                </span>
+                              </td>
+                              <td className="p-3">
+                                {new Date(expense.date).toLocaleDateString("en-IN")}
+                              </td>
+                              <td className="p-3 text-gray-600">
+                                {expense.notes || "-"}
+                              </td>
+                              <td className="p-3">
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => handleEditExpense(expense)}
+                                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition text-sm"
+                                  >
+                                    Edit
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteExpense(expense._id)}
+                                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition text-sm"
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                    {/* Total Expense Display */}
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                      <div className="flex justify-between items-center">
+                        <h3 className="text-lg font-semibold text-red-700">
+                          Total Expenses
+                        </h3>
+                        <p className="text-2xl font-bold text-red-600">
+                          ₹{totalExpense.toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
             )}
@@ -429,53 +444,67 @@ const Dashboard = () => {
                     No incomes found. Add your first income!
                   </div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full border-collapse">
-                      <thead>
-                        <tr className="bg-gray-50">
-                          <th className="p-3 text-left font-semibold">Amount</th>
-                          <th className="p-3 text-left font-semibold">Source</th>
-                          <th className="p-3 text-left font-semibold">Date</th>
-                          <th className="p-3 text-left font-semibold">Notes</th>
-                          <th className="p-3 text-left font-semibold">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {incomes.map((income) => (
-                          <tr key={income._id} className="border-b hover:bg-gray-50">
-                            <td className="p-3">₹{income.amount}</td>
-                            <td className="p-3">
-                              <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                                {income.source || income.category || "No Source"}
-                              </span>
-                            </td>
-                            <td className="p-3">
-                              {new Date(income.date).toLocaleDateString("en-IN")}
-                            </td>
-                            <td className="p-3 text-gray-600">
-                              {income.notes || "-"}
-                            </td>
-                            <td className="p-3">
-                              <div className="flex gap-2">
-                                <button
-                                  onClick={() => handleEditIncome(income)}
-                                  className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition text-sm"
-                                >
-                                  Edit
-                                </button>
-                                <button
-                                  onClick={() => handleDeleteIncome(income._id)}
-                                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition text-sm"
-                                >
-                                  Delete
-                                </button>
-                              </div>
-                            </td>
+                  <>
+                    <div className="overflow-x-auto mb-6">
+                      <table className="w-full border-collapse">
+                        <thead>
+                          <tr className="bg-gray-50">
+                            <th className="p-3 text-left font-semibold">Amount</th>
+                            <th className="p-3 text-left font-semibold">Source</th>
+                            <th className="p-3 text-left font-semibold">Date</th>
+                            <th className="p-3 text-left font-semibold">Notes</th>
+                            <th className="p-3 text-left font-semibold">Actions</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        </thead>
+                        <tbody>
+                          {incomes.map((income) => (
+                            <tr key={income._id} className="border-b hover:bg-gray-50">
+                              <td className="p-3">₹{income.amount}</td>
+                              <td className="p-3">
+                                <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                                  {income.source || income.category || "No Source"}
+                                </span>
+                              </td>
+                              <td className="p-3">
+                                {new Date(income.date).toLocaleDateString("en-IN")}
+                              </td>
+                              <td className="p-3 text-gray-600">
+                                {income.notes || "-"}
+                              </td>
+                              <td className="p-3">
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => handleEditIncome(income)}
+                                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition text-sm"
+                                  >
+                                    Edit
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteIncome(income._id)}
+                                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition text-sm"
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                    {/* Total Income Display */}
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                      <div className="flex justify-between items-center">
+                        <h3 className="text-lg font-semibold text-green-700">
+                          Total Income
+                        </h3>
+                        <p className="text-2xl font-bold text-green-600">
+                          ₹{totalIncome.toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
             )}
