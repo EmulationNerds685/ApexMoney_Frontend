@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useUser } from "../context/UserContext";
 import { Bar, Pie, Line } from "react-chartjs-2";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Added useNavigate
 import {
   Chart as ChartJS,
   ArcElement,
@@ -30,12 +30,20 @@ ChartJS.register(
 
 const Dashboard = () => {
   const { user } = useUser();
+  const navigate = useNavigate(); // Added navigate hook
   const [expenses, setExpenses] = useState([]);
   const [incomes, setIncomes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("total");
   const [editingExpense, setEditingExpense] = useState(null);
   const [editingIncome, setEditingIncome] = useState(null);
+
+  // Redirect to home if user is not authenticated
+  useEffect(() => {
+    if (!user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   useEffect(() => {
     if (!user) return;
@@ -123,6 +131,15 @@ const Dashboard = () => {
   const handleCancelEditIncome = () => {
     setEditingIncome(null);
   };
+
+  // Show loading or redirect if no user
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center h-screen text-gray-500 text-lg">
+        Redirecting to home page...
+      </div>
+    );
+  }
 
   // Chart data preparation
   const totalIncome = incomes.reduce((sum, t) => sum + (t.amount || 0), 0);
@@ -417,7 +434,7 @@ const Dashboard = () => {
                       <thead>
                         <tr className="bg-gray-50">
                           <th className="p-3 text-left font-semibold">Amount</th>
-                          <th className="p-3 text-left font-semibold">Category</th>
+                          <th className="p-3 text-left font-semibold">Source</th>
                           <th className="p-3 text-left font-semibold">Date</th>
                           <th className="p-3 text-left font-semibold">Notes</th>
                           <th className="p-3 text-left font-semibold">Actions</th>
@@ -429,7 +446,7 @@ const Dashboard = () => {
                             <td className="p-3">₹{income.amount}</td>
                             <td className="p-3">
                               <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                                {income.category}
+                                {income.source || income.category || "No Source"}
                               </span>
                             </td>
                             <td className="p-3">
@@ -610,13 +627,13 @@ const Dashboard = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Category</label>
+                <label className="block text-sm font-medium mb-1">Source</label>
                 <input
                   type="text"
-                  value={editingIncome.source}
+                  value={editingIncome.source || editingIncome.category || ""}
                   onChange={(e) => setEditingIncome({
                     ...editingIncome,
-                    category: e.target.value
+                    source: e.target.value
                   })}
                   className="w-full p-2 border rounded"
                   placeholder="Salary, Freelance, etc."
