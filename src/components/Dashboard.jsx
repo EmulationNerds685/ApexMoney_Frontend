@@ -40,10 +40,18 @@ const Dashboard = () => {
 
   // FIXED: Only redirect if user context is done loading AND no user
   useEffect(() => {
+  const checkAuth = async () => {
+    // Wait at least 1 second for session to load
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
     if (!userLoading && !user) {
+      console.log('No user found after waiting, redirecting');
       navigate('/');
     }
-  }, [userLoading, user, navigate]);
+  };
+
+  checkAuth();
+}, [userLoading, user, navigate])
 
   // Set active tab from localStorage on component mount
   useEffect(() => {
