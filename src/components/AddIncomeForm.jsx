@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "../context/UserContext";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import axios from "axios";
 import ExpenseToast from "../toast/ExpenseToast";
+
+
 
 export function AddIncomeForm() {
   const backend = import.meta.env.VITE_BACKENDURL;
   const { user } = useUser();
-
+const navigate=useNavigate()
   const initialState = {
     amount: "",
     category: "Salary",
@@ -56,6 +58,7 @@ export function AddIncomeForm() {
       if (response.data) {
         setShowToast(true);
         setFormData(initialState);
+        navigate('/dashboard')
       } else {
         alert(response.data.message);
       }

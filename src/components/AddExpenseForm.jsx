@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "../context/UserContext";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import axios from "axios";
 import ExpenseToast from "../toast/ExpenseToast";
 
 export function AddExpenseForm() {
+  const navigate=useNavigate()
   const backend = import.meta.env.VITE_BACKENDURL;
   const { user } = useUser();
   const initialState = {
@@ -52,6 +53,7 @@ export function AddExpenseForm() {
       if (response.data) {
         setShowToast(true);
         setFormData(initialState);
+        navigate('/dashboard')
       } else {
         alert(response.data.message);
       }
