@@ -13,7 +13,7 @@ const Header = ({ isMenuOpen, toggleMenu }) => {
 
   return (
     <>
-      <header className="relative bg-white/70 backdrop-blur-md shadow-sm rounded-4xl w-full max-w-7xl mx-auto mt-4 px-4 sm:px-6 py-3 flex justify-between items-center z-20">
+      <header className="relative my-4 bg-white/70 backdrop-blur-md shadow-sm rounded-4xl w-full max-w-7xl mx-auto mt-4 px-4 sm:px-6 py-3 flex justify-between items-center z-20">
         {/* Brand Section */}
         <div className="flex items-center gap-2">
           <div className="bg-purple-600 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold">
