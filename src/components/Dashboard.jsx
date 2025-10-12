@@ -158,7 +158,7 @@ const Dashboard = () => {
     setEditingIncome(null);
   };
 
-  // Handle tab change - also save to localStorage
+  // Handle tab change - save to localStorage
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     localStorage.setItem('dashboardActiveTab', tab);
