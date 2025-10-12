@@ -37,21 +37,31 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("total");
   const [editingExpense, setEditingExpense] = useState(null);
   const [editingIncome, setEditingIncome] = useState(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
-  // FIXED: Only redirect if user context is done loading AND no user
+  // Improved auth check that persists on refresh
   useEffect(() => {
-  const checkAuth = async () => {
-    // Wait at least 1 second for session to load
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    if (!userLoading && !user) {
-      console.log('No user found after waiting, redirecting');
-      navigate('/');
-    }
-  };
+    const checkAuth = () => {
+      // Check if user exists in localStorage as fallback
+      const storedUser = localStorage.getItem('user');
+      
+      if (!user && !storedUser) {
+        navigate('/');
+      } else {
+        setCheckingAuth(false);
+      }
+    };
 
-  checkAuth();
-}, [userLoading, user, navigate])
+    // Give some time for context to load
+    const timer = setTimeout(checkAuth, 300);
+    return () => clearTimeout(timer);
+  }, [user, navigate]);
+
+  // Load data when user is available
+  useEffect(() => {
+    if (!user) return;
+    fetchData();
+  }, [user]);
 
   // Set active tab from localStorage on component mount
   useEffect(() => {
@@ -60,12 +70,6 @@ const Dashboard = () => {
       setActiveTab(savedTab);
     }
   }, []);
-
-  // Load data when user is available
-  useEffect(() => {
-    if (!user) return;
-    fetchData();
-  }, [user]);
 
   // Save active tab to localStorage whenever it changes
   useEffect(() => {
@@ -100,13 +104,16 @@ const Dashboard = () => {
     }
   };
 
-  // CRUD Operations
+  // EXPENSE CRUD Operations
   const handleDeleteExpense = async (expenseId) => {
     if (!window.confirm("Are you sure you want to delete this expense?")) {
       return;
     }
     try {
-      await axios.delete(`${import.meta.env.VITE_BACKENDURL}/expense/delete/${expenseId}`);
+      await axios.delete(
+        `${import.meta.env.VITE_BACKENDURL}/expense/delete/${expenseId}`
+      );
+      
       setExpenses(prev => prev.filter(expense => expense._id !== expenseId));
       alert("Expense deleted successfully!");
     } catch (error) {
@@ -123,12 +130,16 @@ const Dashboard = () => {
     setEditingExpense(null);
   };
 
+  // INCOME CRUD Operations
   const handleDeleteIncome = async (incomeId) => {
     if (!window.confirm("Are you sure you want to delete this income?")) {
       return;
     }
     try {
-      await axios.delete(`${import.meta.env.VITE_BACKENDURL}/income/delete/${incomeId}`);
+      await axios.delete(
+        `${import.meta.env.VITE_BACKENDURL}/income/delete/${incomeId}`
+      );
+      
       setIncomes(prev => prev.filter(income => income._id !== incomeId));
       alert("Income deleted successfully!");
     } catch (error) {
@@ -145,16 +156,15 @@ const Dashboard = () => {
     setEditingIncome(null);
   };
 
+  // Handle tab change - save to localStorage
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
-
-  // Calculate totals
   const totalExpense = expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
   const totalIncome = incomes.reduce((sum, income) => sum + (income.amount || 0), 0);
 
-  // Show loading while user context is loading
-  if (userLoading) {
+  // Show loading while checking auth
+  if (checkingAuth) {
     return (
       <div className="flex justify-center items-center h-screen text-gray-500 text-lg">
         Loading...
@@ -162,7 +172,7 @@ const Dashboard = () => {
     );
   }
 
-  // Show loading or redirect if no user (after user context is done loading)
+  // Show loading or redirect if no user (after auth check)
   if (!user) {
     return (
       <div className="flex justify-center items-center h-screen text-gray-500 text-lg">
@@ -170,8 +180,6 @@ const Dashboard = () => {
       </div>
     );
   }
-
-  // Chart data preparation
   const pieData = {
     labels: ["Income", "Expense"],
     datasets: [
@@ -225,7 +233,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
+      {}
       <aside className="relative bottom-6 left-2 w-60 bg-indigo-600 mt-12 text-white flex flex-col py-6 px-4 rounded-2xl shadow-md ">
         <h2 className="text-2xl font-bold mb-8 text-center">Dashboard</h2>
         <nav className="flex flex-col space-y-3">
@@ -247,6 +255,7 @@ const Dashboard = () => {
         </nav>
       </aside>
 
+      {/* Main Content */}
       <main className="flex-1 px-8 py-6">
         {!loading && expenses.length === 0 && incomes.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full bg-white p-8 rounded-2xl shadow-md text-center">
@@ -399,8 +408,8 @@ const Dashboard = () => {
                         </tbody>
                       </table>
                     </div>
-                    
-                    {/* Total Expense Display */}
+
+                    {}
                     <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                       <div className="flex justify-between items-center">
                         <h3 className="text-lg font-semibold text-red-700">
@@ -482,8 +491,8 @@ const Dashboard = () => {
                         </tbody>
                       </table>
                     </div>
-                    
-                    {/* Total Income Display */}
+
+                    {}
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                       <div className="flex justify-between items-center">
                         <h3 className="text-lg font-semibold text-green-700">
@@ -534,7 +543,7 @@ const Dashboard = () => {
         )}
       </main>
 
-      {/* Edit Expense Modal */}
+      {}
       {editingExpense && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-lg mx-4">
@@ -627,7 +636,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Edit Income Modal */}
+      {}
       {editingIncome && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-lg mx-4">
