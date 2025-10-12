@@ -29,7 +29,7 @@ ChartJS.register(
 );
 
 const Dashboard = () => {
-  const { user } = useUser();
+  const { user, loading: userLoading } = useUser();
   const navigate = useNavigate();
   const [expenses, setExpenses] = useState([]);
   const [incomes, setIncomes] = useState([]);
@@ -38,30 +38,40 @@ const Dashboard = () => {
   const [editingExpense, setEditingExpense] = useState(null);
   const [editingIncome, setEditingIncome] = useState(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
+
+  // Improved auth check that persists on refresh
   useEffect(() => {
     const checkAuth = () => {
-
+      // Check if user exists in localStorage as fallback
       const storedUser = localStorage.getItem('user');
-
+      
       if (!user && !storedUser) {
         navigate('/');
       } else {
         setCheckingAuth(false);
       }
     };
+
+    // Give some time for context to load
     const timer = setTimeout(checkAuth, 300);
     return () => clearTimeout(timer);
   }, [user, navigate]);
+
+  // Load data when user is available
   useEffect(() => {
     if (!user) return;
     fetchData();
   }, [user]);
+
+  // Set active tab from localStorage on component mount
   useEffect(() => {
     const savedTab = localStorage.getItem('dashboardActiveTab');
     if (savedTab) {
       setActiveTab(savedTab);
     }
   }, []);
+
+  // Save active tab to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('dashboardActiveTab', activeTab);
   }, [activeTab]);
@@ -93,16 +103,17 @@ const Dashboard = () => {
       setLoading(false);
     }
   };
+
+  // EXPENSE CRUD Operations
   const handleDeleteExpense = async (expenseId) => {
     if (!window.confirm("Are you sure you want to delete this expense?")) {
       return;
     }
-
     try {
       await axios.delete(
         `${import.meta.env.VITE_BACKENDURL}/expense/delete/${expenseId}`
       );
-
+      
       setExpenses(prev => prev.filter(expense => expense._id !== expenseId));
       alert("Expense deleted successfully!");
     } catch (error) {
@@ -118,16 +129,17 @@ const Dashboard = () => {
   const handleCancelEditExpense = () => {
     setEditingExpense(null);
   };
+
+  // INCOME CRUD Operations
   const handleDeleteIncome = async (incomeId) => {
     if (!window.confirm("Are you sure you want to delete this income?")) {
       return;
     }
-
     try {
       await axios.delete(
         `${import.meta.env.VITE_BACKENDURL}/income/delete/${incomeId}`
       );
-
+      
       setIncomes(prev => prev.filter(income => income._id !== incomeId));
       alert("Income deleted successfully!");
     } catch (error) {
@@ -143,12 +155,15 @@ const Dashboard = () => {
   const handleCancelEditIncome = () => {
     setEditingIncome(null);
   };
+
+  // Handle tab change - save to localStorage
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    localStorage.setItem('dashboardActiveTab', tab);
   };
   const totalExpense = expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
   const totalIncome = incomes.reduce((sum, income) => sum + (income.amount || 0), 0);
+
+  // Show loading while checking auth
   if (checkingAuth) {
     return (
       <div className="flex justify-center items-center h-screen text-gray-500 text-lg">
@@ -156,6 +171,8 @@ const Dashboard = () => {
       </div>
     );
   }
+
+  // Show loading or redirect if no user (after auth check)
   if (!user) {
     return (
       <div className="flex justify-center items-center h-screen text-gray-500 text-lg">
@@ -220,60 +237,25 @@ const Dashboard = () => {
       <aside className="relative bottom-6 left-2 w-60 bg-indigo-600 mt-12 text-white flex flex-col py-6 px-4 rounded-2xl shadow-md ">
         <h2 className="text-2xl font-bold mb-8 text-center">Dashboard</h2>
         <nav className="flex flex-col space-y-3">
-          <button
-            className={`py-2 px-4 rounded-lg text-left transition ${
-              activeTab === "total"
-                ? "bg-white text-indigo-600 font-semibold"
-                : "hover:bg-indigo-500"
-            }`}
-            onClick={() => handleTabChange("total")}
-          >
+          <button onClick={() => handleTabChange("total")} className={`py-2 px-4 rounded-lg text-left transition ${activeTab === "total" ? "bg-white text-indigo-600 font-semibold" : "hover:bg-indigo-500"}`}>
             Overview
           </button>
-          <button
-            className={`py-2 px-4 rounded-lg text-left transition ${
-              activeTab === "income"
-                ? "bg-white text-indigo-600 font-semibold"
-                : "hover:bg-indigo-500"
-            }`}
-            onClick={() => handleTabChange("income")}
-          >
+          <button onClick={() => handleTabChange("income")} className={`py-2 px-4 rounded-lg text-left transition ${activeTab === "income" ? "bg-white text-indigo-600 font-semibold" : "hover:bg-indigo-500"}`}>
             Income
           </button>
-          <button
-            className={`py-2 px-4 rounded-lg text-left transition ${
-              activeTab === "expense"
-                ? "bg-white text-indigo-600 font-semibold"
-                : "hover:bg-indigo-500"
-            }`}
-            onClick={() => handleTabChange("expense")}
-          >
+          <button onClick={() => handleTabChange("expense")} className={`py-2 px-4 rounded-lg text-left transition ${activeTab === "expense" ? "bg-white text-indigo-600 font-semibold" : "hover:bg-indigo-500"}`}>
             Expense
           </button>
-          <button
-            className={`py-2 px-4 rounded-lg text-left transition ${
-              activeTab === "expenseList"
-                ? "bg-white text-indigo-600 font-semibold"
-                : "hover:bg-indigo-500"
-            }`}
-            onClick={() => handleTabChange("expenseList")}
-          >
+          <button onClick={() => handleTabChange("expenseList")} className={`py-2 px-4 rounded-lg text-left transition ${activeTab === "expenseList" ? "bg-white text-indigo-600 font-semibold" : "hover:bg-indigo-500"}`}>
             Expense List
           </button>
-          <button
-            className={`py-2 px-4 rounded-lg text-left transition ${
-              activeTab === "incomeList"
-                ? "bg-white text-indigo-600 font-semibold"
-                : "hover:bg-indigo-500"
-            }`}
-            onClick={() => handleTabChange("incomeList")}
-          >
+          <button onClick={() => handleTabChange("incomeList")} className={`py-2 px-4 rounded-lg text-left transition ${activeTab === "incomeList" ? "bg-white text-indigo-600 font-semibold" : "hover:bg-indigo-500"}`}>
             Income List
           </button>
         </nav>
       </aside>
 
-      {}
+      {/* Main Content */}
       <main className="flex-1 px-8 py-6">
         {!loading && expenses.length === 0 && incomes.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full bg-white p-8 rounded-2xl shadow-md text-center">
