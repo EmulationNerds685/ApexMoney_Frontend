@@ -37,18 +37,44 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("total");
   const [editingExpense, setEditingExpense] = useState(null);
   const [editingIncome, setEditingIncome] = useState(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
-  // Redirect to home if user is not authenticated
+  // Improved auth check that persists on refresh
   useEffect(() => {
-    if (!user) {
-      navigate('/');
-    }
+    const checkAuth = () => {
+      // Check if user exists in localStorage as fallback
+      const storedUser = localStorage.getItem('user');
+      
+      if (!user && !storedUser) {
+        navigate('/');
+      } else {
+        setCheckingAuth(false);
+      }
+    };
+
+    // Give some time for context to load
+    const timer = setTimeout(checkAuth, 300);
+    return () => clearTimeout(timer);
   }, [user, navigate]);
 
+  // Load data when user is available
   useEffect(() => {
     if (!user) return;
     fetchData();
   }, [user]);
+
+  // Set active tab from localStorage on component mount
+  useEffect(() => {
+    const savedTab = localStorage.getItem('dashboardActiveTab');
+    if (savedTab) {
+      setActiveTab(savedTab);
+    }
+  }, []);
+
+  // Save active tab to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('dashboardActiveTab', activeTab);
+  }, [activeTab]);
 
   const fetchData = async () => {
     try {
@@ -132,11 +158,26 @@ const Dashboard = () => {
     setEditingIncome(null);
   };
 
+  // Handle tab change - also save to localStorage
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    localStorage.setItem('dashboardActiveTab', tab);
+  };
+
   // Calculate totals
   const totalExpense = expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
   const totalIncome = incomes.reduce((sum, income) => sum + (income.amount || 0), 0);
 
-  // Show loading or redirect if no user
+  // Show loading while checking auth
+  if (checkingAuth) {
+    return (
+      <div className="flex justify-center items-center h-screen text-gray-500 text-lg">
+        Loading...
+      </div>
+    );
+  }
+
+  // Show loading or redirect if no user (after auth check)
   if (!user) {
     return (
       <div className="flex justify-center items-center h-screen text-gray-500 text-lg">
@@ -209,7 +250,7 @@ const Dashboard = () => {
                 ? "bg-white text-indigo-600 font-semibold"
                 : "hover:bg-indigo-500"
             }`}
-            onClick={() => setActiveTab("total")}
+            onClick={() => handleTabChange("total")}
           >
             Overview
           </button>
@@ -219,7 +260,7 @@ const Dashboard = () => {
                 ? "bg-white text-indigo-600 font-semibold"
                 : "hover:bg-indigo-500"
             }`}
-            onClick={() => setActiveTab("income")}
+            onClick={() => handleTabChange("income")}
           >
             Income
           </button>
@@ -229,7 +270,7 @@ const Dashboard = () => {
                 ? "bg-white text-indigo-600 font-semibold"
                 : "hover:bg-indigo-500"
             }`}
-            onClick={() => setActiveTab("expense")}
+            onClick={() => handleTabChange("expense")}
           >
             Expense
           </button>
@@ -239,7 +280,7 @@ const Dashboard = () => {
                 ? "bg-white text-indigo-600 font-semibold"
                 : "hover:bg-indigo-500"
             }`}
-            onClick={() => setActiveTab("expenseList")}
+            onClick={() => handleTabChange("expenseList")}
           >
             Expense List
           </button>
@@ -249,7 +290,7 @@ const Dashboard = () => {
                 ? "bg-white text-indigo-600 font-semibold"
                 : "hover:bg-indigo-500"
             }`}
-            onClick={() => setActiveTab("incomeList")}
+            onClick={() => handleTabChange("incomeList")}
           >
             Income List
           </button>
@@ -269,12 +310,12 @@ const Dashboard = () => {
               Let's get started by adding your first transaction.
             </p>
             <div className="flex gap-6">
-              <Link to="/income">
+              <Link to="/income" onClick={() => handleTabChange("incomeList")}>
                 <button className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-transform transform hover:scale-105 font-semibold shadow-lg">
                   + Add Income
                 </button>
               </Link>
-              <Link to="/expense">
+              <Link to="/expense" onClick={() => handleTabChange("expenseList")}>
                 <button className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition-transform transform hover:scale-105 font-semibold shadow-lg">
                   + Add Expense
                 </button>
@@ -515,7 +556,7 @@ const Dashboard = () => {
                   <h2 className="text-2xl font-bold text-indigo-700">
                     Income Data
                   </h2>
-                  <Link to="/income">
+                  <Link to="/income" onClick={() => handleTabChange("incomeList")}>
                     <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
                       + Add Income
                     </button>
@@ -531,7 +572,7 @@ const Dashboard = () => {
                   <h2 className="text-2xl font-bold text-indigo-700">
                     Expense Data
                   </h2>
-                  <Link to="/expense">
+                  <Link to="/expense" onClick={() => handleTabChange("expenseList")}>
                     <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
                       + Add Expense
                     </button>
