@@ -24,7 +24,7 @@ const LoadingSpinner = () => (
 );
 
 const Dashboard = () => {
-  const { user } = useUser();
+const { user, loading: userLoading } = useUser();
   const navigate = useNavigate();
   const [expenses, setExpenses] = useState([]);
   const [incomes, setIncomes] = useState([]);
@@ -36,12 +36,14 @@ const Dashboard = () => {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 768);
   useEffect(() => {
-    if (!user && !localStorage.getItem('user')) {
+  if (!userLoading) {
+    if (!user) {
       navigate('/');
     } else {
       setCheckingAuth(false);
     }
-  }, [user, navigate]);
+  }
+}, [user, userLoading, navigate]);
 
   useEffect(() => {
     if (user) fetchData();
@@ -165,7 +167,8 @@ const Dashboard = () => {
       tension: 0.4,
     }],
   }), [incomes]);
-  if (checkingAuth || loading) return <LoadingSpinner />;
+if (checkingAuth || loading || userLoading) return <LoadingSpinner />;
+
   if (!user) return null;
 
   const renderContent = () => {
