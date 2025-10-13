@@ -1,73 +1,108 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { DollarSign, Calendar, Edit, Trash2, PlusCircle, TrendingDown } from 'lucide-react';
 
 const ExpenseList = ({ expenses, totalExpense, onEdit, onDelete }) => {
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { type: 'spring' } }
+  };
+
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-md">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-indigo-700">Expense List</h2>
+    <motion.div
+      className="bg-slate-50 p-4 sm:p-6 rounded-2xl"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      {}
+      <motion.div variants={itemVariants} className="flex flex-wrap justify-between items-center gap-4 mb-8">
+        <h2 className="text-3xl font-bold text-gray-800">Expense Tracker</h2>
         <Link to="/expense">
-          <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
-            + Add Expense
-          </button>
+          <motion.button
+            className="flex items-center gap-2 bg-red-500 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <PlusCircle size={20} />
+            Add Expense
+          </motion.button>
         </Link>
-      </div>
+      </motion.div>
 
       {expenses.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
-          No expenses found. Add your first expense!
-        </div>
+        <motion.div variants={itemVariants} className="text-center py-12 bg-white rounded-2xl shadow-md">
+          <h3 className="text-xl font-semibold text-gray-600">No expenses recorded yet.</h3>
+          <p className="text-gray-400 mt-2">Click "Add Expense" to start tracking!</p>
+        </motion.div>
       ) : (
         <>
-          <div className="overflow-x-auto mb-6">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="p-3 text-left font-semibold">Amount</th>
-                  <th className="p-3 text-left font-semibold">Category</th>
-                  <th className="p-3 text-left font-semibold">Date</th>
-                  <th className="p-3 text-left font-semibold">Notes</th>
-                  <th className="p-3 text-left font-semibold">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {expenses.map((expense) => (
-                  <tr key={expense._id} className="border-b hover:bg-gray-50">
-                    <td className="p-3">₹{expense.amount}</td>
-                    <td className="p-3">
-                      <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
+          {}
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
+            variants={containerVariants}
+          >
+            <AnimatePresence>
+              {expenses.map((expense) => (
+                <motion.div
+                  key={expense._id}
+                  className="bg-white rounded-2xl shadow-lg p-5 flex flex-col justify-between transition-shadow hover:shadow-xl"
+                  variants={itemVariants}
+                  layout
+                  exit={{ opacity: 0, scale: 0.8 }}
+                >
+                  <div>
+                    <div className="flex justify-between items-start">
+                      <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-semibold">
                         {expense.category}
                       </span>
-                    </td>
-                    <td className="p-3">{new Date(expense.date).toLocaleDateString('en-IN')}</td>
-                    <td className="p-3 text-gray-600">{expense.notes || '-'}</td>
-                    <td className="p-3">
                       <div className="flex gap-2">
-                        <button onClick={() => onEdit(expense)} className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition text-sm">
-                          Edit
-                        </button>
-                        <button onClick={() => onDelete(expense._id)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition text-sm">
-                          Delete
-                        </button>
+                        <motion.button whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }} onClick={() => onEdit(expense)} className="text-blue-500 hover:text-blue-700"><Edit size={18} /></motion.button>
+                        <motion.button whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }} onClick={() => onDelete(expense._id)} className="text-red-500 hover:text-red-700"><Trash2 size={18} /></motion.button>
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    </div>
+                    <div className="flex items-center gap-2 my-4">
+                      <DollarSign className="text-red-500" size={24} />
+                      <p className="text-3xl font-bold text-gray-800">₹{expense.amount.toLocaleString()}</p>
+                    </div>
+                    <p className="text-gray-500 text-sm break-words mb-4 min-h-[40px]">{expense.notes || 'No notes provided.'}</p>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-gray-400 border-t pt-3 mt-2">
+                    <Calendar size={14} />
+                    <span>{new Date(expense.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
 
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-red-700">Total Expenses</h3>
-              <p className="text-2xl font-bold text-red-600">
-                ₹{totalExpense.toLocaleString()}
-              </p>
+          {}
+          <motion.div variants={itemVariants} className="bg-white p-6 rounded-2xl shadow-lg">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 rounded-full bg-red-100">
+                <TrendingDown className="w-7 h-7 text-red-600" />
+              </div>
+              <div>
+                <p className="text-lg font-medium text-gray-500">Total Expenses</p>
+                <h3 className="text-3xl font-bold text-red-600">
+                  ₹{totalExpense.toLocaleString()}
+                </h3>
+              </div>
             </div>
-          </div>
+          </motion.div>
         </>
       )}
-    </div>
+    </motion.div>
   );
 };
 

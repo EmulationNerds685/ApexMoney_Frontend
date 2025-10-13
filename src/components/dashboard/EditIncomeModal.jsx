@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Save, X } from 'lucide-react';
 
 const EditIncomeModal = ({ income, onUpdate, onCancel }) => {
   const [formData, setFormData] = useState(income);
@@ -17,34 +19,61 @@ const EditIncomeModal = ({ income, onUpdate, onCancel }) => {
     onUpdate(formData);
   };
 
+  const backdropVariants = {
+    visible: { opacity: 1 },
+    hidden: { opacity: 0 },
+  };
+
+  const modalVariants = {
+    hidden: { y: "-50vh", opacity: 0, scale: 0.9 },
+    visible: { y: 0, opacity: 1, scale: 1, transition: { type: 'spring', damping: 25, stiffness: 300 } },
+    exit: { y: "100vh", opacity: 0, scale: 0.9 },
+  };
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-lg mx-4">
-        <h3 className="text-2xl font-bold mb-4">Edit Income</h3>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Amount</label>
-            <input type="number" name="amount" value={formData.amount} onChange={handleChange} className="w-full p-2 border rounded" required />
+    <AnimatePresence>
+      <motion.div
+        className="fixed inset-0 bg-black/50 bg-opacity-60 flex items-center justify-center z-50 p-4"
+        variants={backdropVariants}
+        initial="hidden"
+        animate="visible"
+        exit="hidden"
+        onClick={onCancel}
+      >
+        <motion.div
+          className="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md"
+          variants={modalVariants}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex justify-between items-center mb-6 pb-3 border-b">
+            <h3 className="text-2xl font-bold text-gray-800">Edit Income</h3>
+            <button onClick={onCancel} className="text-gray-400 hover:text-gray-700"><X /></button>
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Source</label>
-            <input type="text" name="source" value={formData.source || formData.category || ''} onChange={handleChange} className="w-full p-2 border rounded" placeholder="Salary, Freelance, etc." required />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Date</label>
-            <input type="date" name="date" value={new Date(formData.date).toISOString().slice(0, 10)} onChange={handleChange} className="w-full p-2 border rounded" required />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Notes</label>
-            <textarea name="notes" value={formData.notes || ''} onChange={handleChange} className="w-full p-2 border rounded" rows="3" />
-          </div>
-          <div className="flex gap-2">
-            <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Update</button>
-            <button type="button" onClick={onCancel} className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</button>
-          </div>
-        </form>
-      </div>
-    </div>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">Amount</label>
+              <input type="number" name="amount" value={formData.amount} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 transition" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">Source</label>
+              <input type="text" name="source" value={formData.source || formData.category || ''} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 transition" placeholder="e.g., Salary, Freelance Project" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">Date</label>
+              <input type="date" name="date" value={new Date(formData.date).toISOString().slice(0, 10)} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 transition" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">Notes (Optional)</label>
+              <textarea name="notes" value={formData.notes || ''} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 transition" rows="3" />
+            </div>
+            <div className="flex gap-4 pt-4">
+              <motion.button type="submit" className="flex-1 bg-indigo-600 text-white px-4 py-3 rounded-lg font-semibold shadow-md flex items-center justify-center gap-2" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}><Save size={18}/>Update</motion.button>
+              <motion.button type="button" onClick={onCancel} className="flex-1 bg-gray-200 text-gray-700 px-4 py-3 rounded-lg font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>Cancel</motion.button>
+            </div>
+          </form>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 

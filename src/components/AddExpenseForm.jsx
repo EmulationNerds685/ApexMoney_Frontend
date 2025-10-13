@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "../context/UserContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ExpenseToast from "../toast/ExpenseToast";
 
 export function AddExpenseForm({ expenseToEdit, onFormSubmit, onCancelEdit }) {
   const backend = import.meta.env.VITE_BACKENDURL;
   const { user } = useUser();
-
+  const navigate = useNavigate();
   const initialState = {
     amount: "",
     category: "Food",
@@ -48,7 +48,6 @@ export function AddExpenseForm({ expenseToEdit, onFormSubmit, onCancelEdit }) {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     const dataToSubmit = {
@@ -60,29 +59,34 @@ export function AddExpenseForm({ expenseToEdit, onFormSubmit, onCancelEdit }) {
     try {
       let response;
       if (formData._id) {
-        // --- UPDATE LOGIC ---
+
         response = await axios.put(
-          // Changed '/update-expense/' to '/update/'
           `${backend}/expense/update/${formData._id}`,
           dataToSubmit
         );
         setToastMessage("Your expense has been updated.");
       } else {
-        // --- ADD LOGIC ---
+
         response = await axios.post(
-          // Changed '/add-expense' to '/add'
-          `${backend}/expense/add`, 
+          `${backend}/expense/add`,
           dataToSubmit
         );
         setToastMessage("Your expense has been saved.");
       }
 
       if (response.data) {
-        setShowToast(true);
-        setFormData(initialState);
         if (onFormSubmit) {
           onFormSubmit();
         }
+        if (!formData._id) {
+          localStorage.setItem('dashboardActiveTab', 'expenseList');
+          navigate('/dashboard');
+        } else {
+
+          setShowToast(true);
+          setFormData(initialState);
+        }
+
       } else {
         alert(response.data.message || "An unknown error occurred.");
       }
@@ -91,7 +95,6 @@ export function AddExpenseForm({ expenseToEdit, onFormSubmit, onCancelEdit }) {
       alert("Error saving expense. Please try again.");
     }
   };
-
   if (!user) {
     return (
       <div className="flex justify-center items-center">
@@ -106,9 +109,8 @@ export function AddExpenseForm({ expenseToEdit, onFormSubmit, onCancelEdit }) {
       </div>
     );
   }
-  
-  const isEditing = !!formData._id;
 
+  const isEditing = !!formData._id;
   return (
     <div className="flex justify-center items-center">
       <ExpenseToast
@@ -122,7 +124,6 @@ export function AddExpenseForm({ expenseToEdit, onFormSubmit, onCancelEdit }) {
           {isEditing ? "Edit Expense" : "Add New Expense"}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Form inputs remain unchanged */}
           <div>
             <label htmlFor="amount" className="block text-sm font-medium text-gray-600 mb-1">Amount</label>
             <div className="relative">

@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import { useUser } from '../context/UserContext';
+import { useNavigate } from 'react-router-dom';
+import { Toaster, toast } from 'react-hot-toast';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Bar, Pie, Line } from 'react-chartjs-2';
-import { Link, useNavigate } from 'react-router-dom';
 import {
   Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title,
 } from 'chart.js';
-
-// Import the new components
 import DashboardSidebar from './dashboard/DashboardSidebar';
 import WelcomeEmptyState from './dashboard/WelcomeEmptyState';
 import DashboardOverview from './dashboard/DashboardOverview';
@@ -17,6 +17,11 @@ import EditExpenseModal from './dashboard/EditExpenseModal';
 import EditIncomeModal from './dashboard/EditIncomeModal';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title);
+const LoadingSpinner = () => (
+  <div className="flex justify-center items-center h-screen w-full bg-slate-50">
+    <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-indigo-600"></div>
+  </div>
+);
 
 const Dashboard = () => {
   const { user } = useUser();
@@ -29,10 +34,9 @@ const Dashboard = () => {
   const [editingIncome, setEditingIncome] = useState(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
 
-  // Auth check and data fetching
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 768);
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (!user && !storedUser) {
+    if (!user && !localStorage.getItem('user')) {
       navigate('/');
     } else {
       setCheckingAuth(false);
@@ -40,12 +44,9 @@ const Dashboard = () => {
   }, [user, navigate]);
 
   useEffect(() => {
-    if (user) {
-      fetchData();
-    }
+    if (user) fetchData();
   }, [user]);
-  
-  // Tab state persistence
+
   useEffect(() => {
     const savedTab = localStorage.getItem('dashboardActiveTab');
     if (savedTab) setActiveTab(savedTab);
@@ -57,18 +58,14 @@ const Dashboard = () => {
 
   const fetchData = async () => {
     setLoading(true);
-   try {
+    try {
       const [expenseRes, incomeRes] = await Promise.all([
         axios.get(`${import.meta.env.VITE_BACKENDURL}/expense/get?userId=${user._id}`),
         axios.get(`${import.meta.env.VITE_BACKENDURL}/income/get?userId=${user._id}`),
       ]);
-
-      // Correctly parse the expense data from the API response
       const expensesData = Array.isArray(expenseRes.data)
         ? expenseRes.data
         : expenseRes.data.expenses || expenseRes.data.data || expenseRes.data.documents || [];
-      
-      // Correctly parse the income data from the API response (THIS IS THE FIX)
       const incomesData = Array.isArray(incomeRes.data)
         ? incomeRes.data
         : incomeRes.data.incomes || incomeRes.data.data || incomeRes.data.documents || [];
@@ -78,82 +75,104 @@ const Dashboard = () => {
 
     } catch (err) {
       console.error('Error fetching data:', err);
-      // It's good practice to reset to empty arrays on error
+
       setExpenses([]);
       setIncomes([]);
     } finally {
       setLoading(false);
     }
   };
+  const handleDelete = (type, id) => {
 
-  // CRUD Operations
-  const handleDelete = async (type, id) => {
-    if (!window.confirm(`Are you sure you want to delete this ${type}?`)) return;
-    try {
-      await axios.delete(`${import.meta.env.VITE_BACKENDURL}/${type}/delete/${id}`);
-      if (type === 'expense') setExpenses(prev => prev.filter(item => item._id !== id));
-      if (type === 'income') setIncomes(prev => prev.filter(item => item._id !== id));
-      alert(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully!`);
-    } catch (error) {
-      console.error(`Error deleting ${type}:`, error);
-      alert(`Failed to delete ${type}. Please try again.`);
-    }
+    toast((t) => (
+      <span className="flex flex-col items-center gap-3">
+        Are you sure you want to delete this {type}?
+        <div className="flex gap-4">
+          <button
+            className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg"
+            onClick={() => {
+              const promise = axios.delete(`${import.meta.env.VITE_BACKENDURL}/${type}/delete/${id}`);
+              toast.promise(promise, {
+                loading: `Deleting ${type}...`,
+                success: () => {
+                  fetchData();
+                  return `${type.charAt(0).toUpperCase() + type.slice(1)} deleted!`;
+                },
+                error: `Failed to delete ${type}.`,
+              });
+              toast.dismiss(t.id);
+            }}
+          >
+            Delete
+          </button>
+          <button
+            className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg"
+            onClick={() => toast.dismiss(t.id)}
+          >
+            Cancel
+          </button>
+        </div>
+      </span>
+    ), { duration: 6000 });
   };
-  
-  const handleUpdate = async (type, data) => {
-    try {
-      await axios.put(`${import.meta.env.VITE_BACKENDURL}/${type}/update/${data._id}`, data);
-      setEditingExpense(null);
-      setEditingIncome(null);
-      fetchData(); // Refetch to ensure data consistency
-      alert(`${type.charAt(0).toUpperCase() + type.slice(1)} updated successfully!`);
-    } catch (error) {
-      console.error(`Error updating ${type}:`, error);
-      alert(`Failed to update ${type}.`);
-    }
-  };
-  
-  // Totals and Chart Data Preparation
-  const totalExpense = expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
-  const totalIncome = incomes.reduce((sum, income) => sum + (income.amount || 0), 0);
 
-  const pieData = {
+  const handleUpdate = (type, data) => {
+    const promise = axios.put(`${import.meta.env.VITE_BACKENDURL}/${type}/update/${data._id}`, data);
+
+    toast.promise(promise, {
+      loading: `Updating ${type}...`,
+      success: () => {
+        setEditingExpense(null);
+        setEditingIncome(null);
+        fetchData();
+        return `${type.charAt(0).toUpperCase() + type.slice(1)} updated successfully!`;
+      },
+      error: `Failed to update ${type}.`,
+    });
+  };
+  const { totalIncome, totalExpense } = useMemo(() => ({
+    totalIncome: incomes.reduce((sum, income) => sum + (income.amount || 0), 0),
+    totalExpense: expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0),
+  }), [incomes, expenses]);
+
+  const pieData = useMemo(() => ({
     labels: ['Income', 'Expense'],
-    datasets: [{ data: [totalIncome, totalExpense], backgroundColor: ['#4CAF50', '#F87171'] }],
-  };
+    datasets: [{ data: [totalIncome, totalExpense], backgroundColor: ['#10B981', '#EF4444'], borderColor: '#F9FAFB', borderWidth: 2 }],
+  }), [totalIncome, totalExpense]);
 
-  const expenseCategories = [...new Set(expenses.map((e) => e.category))];
-  const barData = {
-    labels: expenseCategories,
-    datasets: [{
-      label: 'Expense by Category',
-      data: expenseCategories.map((cat) => expenses.filter((e) => e.category === cat).reduce((sum, e) => sum + (e.amount || 0), 0)),
-      backgroundColor: '#A855F7',
-    }],
-  };
-  
-  const lineData = {
-    labels: incomes.map((t) => new Date(t.date).toLocaleDateString('en-IN')),
+  const barData = useMemo(() => {
+    const categories = [...new Set(expenses.map(e => e.category))];
+    return {
+      labels: categories,
+      datasets: [{
+        label: 'Expense by Category',
+        data: categories.map(cat => expenses.filter(e => e.category === cat).reduce((sum, e) => sum + e.amount, 0)),
+        backgroundColor: '#8B5CF6',
+        borderRadius: 8,
+        maxBarThickness: 60,
+      }],
+    };
+  }, [expenses]);
+
+  const lineData = useMemo(() => ({
+    labels: incomes.map(t => new Date(t.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })),
     datasets: [{
       label: 'Income Over Time',
-      data: incomes.map((t) => t.amount),
-      borderColor: '#4F46E5',
-      backgroundColor: 'rgba(79,70,229,0.2)',
-      tension: 0.3,
+      data: incomes.map(t => t.amount),
+      borderColor: '#3B82F6',
+      backgroundColor: 'rgba(59, 130, 246, 0.1)',
       fill: true,
+      tension: 0.4,
     }],
-  };
+  }), [incomes]);
+  if (checkingAuth || loading) return <LoadingSpinner />;
+  if (!user) return null;
 
-  // Conditional Rendering Logic
-  if (checkingAuth) return <div className="flex justify-center items-center h-screen">Loading...</div>;
-  if (!user) return <div className="flex justify-center items-center h-screen">Redirecting...</div>;
-  if (loading) return <div className="flex justify-center items-center h-screen">Loading dashboard...</div>;
-  
   const renderContent = () => {
-    if (!loading && expenses.length === 0 && incomes.length === 0) {
+    if (expenses.length === 0 && incomes.length === 0) {
         return <WelcomeEmptyState user={user} handleTabChange={setActiveTab} />;
     }
-    
+
     switch (activeTab) {
       case 'total':
         return <DashboardOverview user={user} pieData={pieData} barData={barData} lineData={lineData} totalIncome={totalIncome} totalExpense={totalExpense} />;
@@ -162,19 +181,37 @@ const Dashboard = () => {
       case 'incomeList':
         return <IncomeList incomes={incomes} totalIncome={totalIncome} onEdit={setEditingIncome} onDelete={(id) => handleDelete('income', id)} />;
       case 'income':
-        return <div className="bg-white p-6 rounded-2xl shadow-md"><h2 className="text-2xl font-bold text-indigo-700 mb-6">Income Data</h2><Line data={lineData} /></div>;
+        return <div className="bg-white p-6 rounded-2xl shadow-lg h-[50vh]"><h2 className="text-2xl font-bold text-gray-700 mb-6">Income Data</h2><Line data={lineData} /></div>;
       case 'expense':
-        return <div className="bg-white p-6 rounded-2xl shadow-md"><h2 className="text-2xl font-bold text-indigo-700 mb-6">Expense Data</h2><Bar data={barData} /></div>;
+        return <div className="bg-white p-6 rounded-2xl shadow-lg h-[50vh]"><h2 className="text-2xl font-bold text-gray-700 mb-6">Expense Data</h2><Bar data={barData} /></div>;
       default:
         return null;
     }
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <DashboardSidebar activeTab={activeTab} handleTabChange={setActiveTab} />
-      
-      <main className="flex-1 px-8 py-6">{renderContent()}</main>
+    <div className="flex min-h-screen bg-slate-100 font-sans">
+      {}
+      <Toaster position="top-center" reverseOrder={false} />
+
+      <DashboardSidebar activeTab={activeTab} handleTabChange={setActiveTab}   isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen}/>
+
+      {}
+      <main className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'md:ml-60' : 'md:ml-0'}`}>
+        <div className="p-4 sm:p-6 lg:p-8">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.25 }}
+            >
+              {renderContent()}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </main>
 
       {editingExpense && <EditExpenseModal expense={editingExpense} onUpdate={(data) => handleUpdate('expense', data)} onCancel={() => setEditingExpense(null)} />}
       {editingIncome && <EditIncomeModal income={editingIncome} onUpdate={(data) => handleUpdate('income', data)} onCancel={() => setEditingIncome(null)} />}

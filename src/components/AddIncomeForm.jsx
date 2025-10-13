@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "../context/UserContext";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ExpenseToast from "../toast/ExpenseToast";
-
-
 
 export function AddIncomeForm() {
   const backend = import.meta.env.VITE_BACKENDURL;
   const { user } = useUser();
-const navigate=useNavigate()
+  const navigate = useNavigate();
   const initialState = {
     amount: "",
     category: "Salary",
@@ -45,7 +43,6 @@ const navigate=useNavigate()
       [name]: value,
     }));
   };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -56,9 +53,12 @@ const navigate=useNavigate()
       });
 
       if (response.data) {
+
         setShowToast(true);
         setFormData(initialState);
-        navigate('/dashboard')
+        localStorage.setItem('dashboardActiveTab', 'incomeList');
+        navigate('/dashboard');
+
       } else {
         alert(response.data.message);
       }
@@ -67,7 +67,6 @@ const navigate=useNavigate()
       alert("Error saving income. Please try again.");
     }
   };
-
   return !user ? (
     <div className="flex justify-center items-center">
       <div className="bg-white m-5 p-6 sm:p-8 rounded-2xl shadow-lg w-full max-w-lg">
