@@ -1,24 +1,25 @@
+// src/components/Pricing.jsx
+
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-// --- Heroicon SVG Components ---
-
+// --- Heroicon SVG Components (No changes needed) ---
 const StarIcon = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" {...props}>
     <path fillRule="evenodd" d="M10.868 2.884c.321-.662 1.134-.662 1.456 0l1.96 4.048 4.458.647c.725.105 1.018.986.49 1.488l-3.226 3.143.76 4.44c.123.715-.63 1.255-1.282.913L10 15.347l-3.984 2.095c-.652.342-1.405-.198-1.282-.913l.76-4.44-3.226-3.143c-.528-.502-.235-1.383.49-1.488l4.458-.647 1.96-4.048z" clipRule="evenodd" />
   </svg>
 );
-
 const CheckIcon = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" {...props}>
     <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.052-.143z" clipRule="evenodd" />
   </svg>
 );
 
-// --- Pricing Plan Data ---
-
+// --- Pricing Plan Data (Refined for better separation of concerns) ---
 const plans = [
   {
     name: 'Basic',
+    href: '/signup?plan=basic',
     price: '$0',
     description: 'Perfect for individuals getting started.',
     features: [
@@ -31,7 +32,8 @@ const plans = [
     popular: false,
   },
   {
-    name: 'Pro (Recommended)',
+    name: 'Pro',
+    href: '/signup?plan=pro',
     price: '$19',
     description: 'Best for individuals & small teams.',
     features: [
@@ -45,36 +47,34 @@ const plans = [
   },
   {
     name: 'Business',
+    href: '/signup?plan=business',
     price: '$49',
     description: 'For growing businesses & advanced needs.',
     features: [
-      'All Pro features',
+      'All Pro features included',
       'Multi-user access',
       'Custom financial reports',
       'Dedicated account manager',
-      'Premium support',
+      'Premium phone & email support',
     ],
     popular: false,
   },
 ];
 
-
-// --- Pricing Component ---
-
 export default function Pricing() {
   return (
-    <div className="bg-slate-50 py-24 sm:py-32 font-sans">
+    <section className="bg-white py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         
         {/* Header */}
         <div className="mx-auto max-w-4xl text-center">
-            <p className="font-semibold leading-7 text-violet-600">Choose the Perfect Plan</p>
+            <p className="font-semibold leading-7 text-purple-600">Pricing</p>
             <h2 className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-                Transparent Pricing for Everyone
+                The Right Plan for Your Needs
             </h2>
         </div>
         <p className="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-gray-600">
-          Choose the perfect plan to manage your finances — no hidden fees, no surprises.
+          Simple, transparent pricing. Choose the plan that helps you achieve your financial goals.
         </p>
 
         {/* Pricing Cards */}
@@ -82,18 +82,19 @@ export default function Pricing() {
           {plans.map((plan) => (
             <div
               key={plan.name}
-              className={`rounded-2xl p-8 ring-1 ${
-                plan.popular ? 'bg-white ring-2 ring-violet-600' : 'bg-white ring-gray-200'
+              className={`rounded-3xl p-8 transition-all duration-300 ${
+                plan.popular 
+                ? 'bg-white ring-2 ring-purple-600 shadow-2xl scale-105' 
+                : 'bg-gray-50 ring-1 ring-gray-200 lg:hover:scale-105'
               }`}
             >
               <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold leading-8 text-gray-900 flex items-center gap-x-2">
-                    <StarIcon className={`w-5 h-5 ${plan.popular ? 'text-yellow-500' : 'text-gray-400'}`} />
+                <h3 className="text-lg font-semibold leading-8 text-gray-900">
                     {plan.name}
                 </h3>
                 {plan.popular && (
-                    <p className="rounded-full bg-violet-100 px-2.5 py-1 text-xs font-semibold leading-5 text-violet-600">
-                    Most Popular
+                    <p className="flex items-center gap-x-1 rounded-full bg-purple-100 px-2.5 py-1 text-xs font-semibold leading-5 text-purple-600">
+                      <StarIcon className="w-4 h-4" /> Most Popular
                     </p>
                 )}
               </div>
@@ -104,21 +105,21 @@ export default function Pricing() {
               </p>
               <p className="mt-6 text-base leading-7 text-gray-600">{plan.description}</p>
               
-              <a
-                href="#"
-                className={`mt-8 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-offset-2 ${
+              <Link
+                to={plan.href}
+                className={`mt-8 block rounded-md py-2.5 px-3.5 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-colors ${
                   plan.popular
-                    ? 'bg-violet-600 text-white shadow-sm hover:bg-violet-500 focus-visible:outline-violet-600'
-                    : 'bg-gray-800 text-white shadow-sm hover:bg-gray-700 focus-visible:outline-gray-800'
+                    ? 'bg-purple-600 text-white shadow-sm hover:bg-purple-500 focus-visible:outline-purple-600'
+                    : 'bg-white text-purple-600 ring-1 ring-inset ring-purple-200 hover:bg-purple-50 focus-visible:outline-purple-600'
                 }`}
               >
                 Get Started
-              </a>
+              </Link>
 
-              <ul role="list" className="mt-8 space-y-3 text-sm leading-6 text-gray-600">
+              <ul role="list" className="mt-10 space-y-3 text-sm leading-6 text-gray-600">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex gap-x-3">
-                    <CheckIcon className="h-6 w-5 flex-none text-violet-600" aria-hidden="true" />
+                    <CheckIcon className="h-6 w-5 flex-none text-purple-600" aria-hidden="true" />
                     {feature}
                   </li>
                 ))}
@@ -126,17 +127,7 @@ export default function Pricing() {
             </div>
           ))}
         </div>
-        
-        {/* Footer Button */}
-        <div className="mt-16 flex justify-center">
-            <button className="bg-slate-100 text-slate-600 font-semibold py-3 px-8 rounded-full transition-all duration-300 hover:bg-slate-200 ring-1 ring-slate-200 flex items-center gap-x-2">
-                See All Features
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" clipRule="evenodd" />
-                </svg>
-            </button>
-        </div>
       </div>
-    </div>
+    </section>
   );
 }

@@ -1,7 +1,9 @@
+// src/components/HowItWorks.jsx
+
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 // --- Heroicon SVG Components ---
-
 const UserPlusIcon = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.5 21c-2.305 0-4.47-.612-6.337-1.664z" />
@@ -14,58 +16,56 @@ const PresentationChartBarIcon = (props) => (
   </svg>
 );
 
-const CursorArrowRaysIcon = (props) => (
+// New Icon for clarity on "Adding/Tracking" expenses
+const PencilSquareIcon = (props) => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m0 13.5v2.25m0-13.5c-1.381 0-2.5 1.119-2.5 2.5 0 .563.183 1.08.494 1.506L12 12.75l2.006-2.244A2.5 2.5 0 0014.5 6.75c0-1.381-1.119-2.5-2.5-2.5z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
     </svg>
 );
 
 
-// --- How It Works Component ---
-
 export default function HowItWorks() {
+  // The steps are now re-ordered and rewritten for a more logical user journey.
   const steps = [
     {
       icon: <UserPlusIcon className="w-6 h-6 text-white" />,
-      name: 'Create Your Free Account in Minutes',
-      description: 'Get started instantly and securely connect all your bank accounts and financial tools in one place.',
+      name: '1. Create Your Account',
+      description: 'Get started in minutes. Securely create your account to begin your journey towards financial clarity.',
+    },
+    {
+      icon: <PencilSquareIcon className="w-6 h-6 text-white" />,
+      name: '2. Track Your Spending',
+      description: 'Easily add your income and expenses on the go. Our smart categorization does the heavy lifting for you.',
     },
     {
       icon: <PresentationChartBarIcon className="w-6 h-6 text-white" />,
-      name: 'See Smart Reports, Instantly',
-      description: 'Receive detailed, automated reports that help you understand your finances and make informed decisions effortlessly.',
+      name: '3. Gain Instant Insights',
+      description: 'Instantly view your financial health with clear charts and automated reports. Make informed decisions effortlessly.',
     },
-    {
-      icon: <CursorArrowRaysIcon className="w-6 h-6 text-white" />,
-      name: 'Track Spending & Stay on Budget',
-      description: 'Visualize your expenses, set clear budgets, and never lose track of where your money goes again.',
-    },
-  ]
+  ];
 
   return (
-    <div className="bg-gradient-to-br from-violet-500 to-indigo-600 font-sans">
+    <section className="bg-gradient-to-br from-purple-600 to-indigo-700">
       <div className="mx-auto max-w-7xl py-24 px-6 lg:px-8">
-        <div className="grid grid-cols-1 items-center gap-y-16 gap-x-8 lg:grid-cols-2">
+        <div className="grid grid-cols-1 items-center gap-y-16 gap-x-12 lg:grid-cols-2">
           
-          {/* Left Column: Image */}
-          <div className="relative h-full flex items-center justify-center">
-            <div className="bg-white/10 p-4 rounded-3xl backdrop-blur-sm">
-                <img
-                    src="./Transactions_Screen.png"
-                    alt="App screenshot"
-                    className="rounded-2xl shadow-2xl"
-                />
-            </div>
+          {/* Left Column: Image (Suggestion: Use a more comprehensive dashboard image) */}
+          <div className="flex items-center justify-center">
+            <img
+                src="./App_Mockup.png" // Suggestion: Use a dashboard mockup here
+                alt="ApexMoney Dashboard View"
+                className="max-w-sm rounded-2xl shadow-2xl"
+            />
           </div>
 
           {/* Right Column: Content */}
           <div>
-            <div className="mb-10">
+            <div className="mb-12">
               <span className="rounded-full bg-white/10 px-3 py-1 text-sm font-semibold leading-6 text-white ring-1 ring-inset ring-white/20">
                 How It Works
               </span>
               <h2 className="mt-6 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                Manage Your Finances in 3 Simple Steps
+                Master Your Money in 3 Simple Steps
               </h2>
               <p className="mt-4 text-lg leading-8 text-indigo-100">
                 It's quick, easy, and stress-free to stay on top of your money — no technical skills required.
@@ -74,7 +74,7 @@ export default function HowItWorks() {
             
             <dl className="space-y-10">
               {steps.map((step) => (
-                <div key={step.name} className="relative flex gap-x-4">
+                <div key={step.name} className="relative flex gap-x-5">
                   <div className="flex h-12 w-12 flex-none items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/20">
                     {step.icon}
                   </div>
@@ -86,12 +86,13 @@ export default function HowItWorks() {
               ))}
             </dl>
 
-            <button className="mt-12 bg-white text-violet-600 font-semibold py-3 px-6 rounded-lg transition-transform duration-300 hover:scale-105 shadow-lg">
-                Try It for Free
-            </button>
+            <Link to="/signup/login" className="mt-12 inline-block bg-white text-purple-600 font-semibold py-3 px-6 rounded-lg transition-transform duration-300 hover:scale-105 shadow-lg">
+                Start for Free
+            </Link>
           </div>
         </div>
       </div>
-    </div>
+    
+    </section>
   );
 }

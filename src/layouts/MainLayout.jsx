@@ -1,10 +1,10 @@
-// src/layouts/MainLayout.jsx
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 const MainLayout = () => {
-  // Move the menu state from App.jsx into this layout
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -20,9 +20,10 @@ const MainLayout = () => {
     >
       <Header isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
       <main className="flex-grow">
-        {/* The Outlet component will render the specific page (Home, Signup, etc.) */}
+        {}
         <Outlet />
       </main>
+      <Footer/>
     </div>
   );
 };

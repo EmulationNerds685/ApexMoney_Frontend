@@ -10,14 +10,10 @@ import Dashboard from '../components/Dashboard';
 function AppRoute() {
   return (
     <Routes>
-      {}
       <Route element={<MainLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/signup/login" element={<Signup />} />
+      <Route path="/" element={<Home />} />
+      <Route path="/signup/login" element={<Signup />} />
       </Route>
-
-      {}
-      {}
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/expense" element={<AddExpenseForm />} />
       <Route path="/income" element={<AddIncomeForm />} />

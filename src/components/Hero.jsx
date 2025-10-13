@@ -1,94 +1,68 @@
+// src/components/Hero.jsx
+
 import React from "react";
 import { Link } from "react-router-dom";
-import {
-  ArrowRightIcon,
-  
-} from "@heroicons/react/24/outline";
-
+import { ArrowRightIcon } from "@heroicons/react/24/outline";
 
 const Hero = () => {
   return (
-    <section className="flex flex-col-reverse md:flex-row justify-between items-center flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-12">
-      {/* Left Content */}
-      <div className="w-full max-w-lg text-center md:text-left mt-10 md:mt-0">
-        <div className="inline-block bg-purple-200 text-purple-700 text-sm px-4 py-1 rounded-full font-medium mb-4">
-          Your Money. Your Control.
-        </div>
+    <>
+      <section className="flex flex-col-reverse md:flex-row items-center w-full max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24">
+        {/* Left Content: Headline, Sub-headline, and CTAs */}
+        <div className="w-full max-w-xl text-center md:text-left mt-12 md:mt-0">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900">
+            <span className="block">Financial Clarity,</span>
+            <span className="block bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              Effortlessly Achieved.
+            </span>
+          </h1>
 
-        <h2 className="text-4xl sm:text-5xl lg:text-6xl font-medium text-gray-900 leading-tight mb-5">
-          Take Control of Your <br /> Financial Future
-        </h2>
-
-        <p className="text-gray-600 mb-8 max-w-md mx-auto md:mx-0">
-          Take control of your money with ApexMoney. Track your spending, save
-          smartly — all in one easy-to-use app.
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-          <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-full font-medium flex items-center justify-center gap-2 transition-colors">
-            Download Apps{" "}
-            <ArrowRightIcon className="h-6 w-6 bg-white rounded-4xl p-1 text-black" />
-          </button>
-          <Link to='/income'>
-          <button className="border border-indigo-600 text-indigo-600 hover:bg-indigo-50 px-5 py-3 rounded-full font-medium transition-colors">
-            Add your Personal Income
-          </button>
-          </Link>
-        </div>
-
-        <div className="mt-10">
-          <p className="text-gray-500 text-sm mb-3">
-            Trusted by 25K+ business teams
+          <p className="mt-6 max-w-md mx-auto md:mx-0 text-lg text-gray-600">
+            Stop wondering where your money goes. ApexMoney is the simple, smart app for tracking expenses, managing budgets, and growing your savings.
           </p>
-          <div className="flex gap-6 flex-wrap justify-center md:justify-start">
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg"
-              alt="Notion"
-              className="h-8"
-            />
-            <img
-              src="./mchip.png"
-              alt="Mailchimp"
-              className="h-8"
-            />
-            <img
-              src="./airtable.png"
-              alt="Airtable"
-              className="h-8"
-            />
-            <img
-              src="./gumroad.png"
-              alt="Gumroad"
-              className="h-8"
-            />
-          </div>
-        </div>
-      </div>
 
-      {/* Right Content - Image */}
-      <div className="relative flex justify-center">
-        <div className="relative">
-          <img
-            src="./App_Mockup.png"
-            alt="App Mockup"
-            className="w-[280px] sm:w-[300px] md:w-[380px] drop-shadow-2xl rounded-3xl"
-          />
-          <div className="absolute bottom-[-20px] left-1/2 -translate-x-1/2 w-11/12 sm:w-auto sm:left-auto sm:translate-x-0 sm:bottom-[-40px] sm:right-[-20px] bg-white shadow-lg rounded-2xl px-5 py-3 text-sm flex items-center gap-3">
-            <img
-              src="https://randomuser.me/api/portraits/women/65.jpg"
-              alt="User"
-              className="w-8 h-8 rounded-full"
-            />
-            <div>
-              <p className="font-semibold">500K+</p>
-              <p className="text-gray-500 text-xs whitespace-nowrap">
-                Trusted by users worldwide
-              </p>
-            </div>
+          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+            <Link
+              to="/signup/login"
+              className="group inline-flex items-center justify-center rounded-md bg-purple-600 px-6 py-3 text-base font-semibold text-white shadow-md hover:bg-purple-700 transition"
+            >
+              Start for Free
+              <ArrowRightIcon className="h-5 w-5 ml-2 transition-transform group-hover:translate-x-1" />
+            </Link>
+            <a
+              href="#demo" // Placeholder link for a future "Demo" section
+              className="inline-flex items-center justify-center rounded-md bg-white px-6 py-3 text-base font-semibold text-purple-600 ring-1 ring-inset ring-purple-200 hover:bg-purple-50 transition"
+            >
+              See a Demo
+            </a>
           </div>
         </div>
+
+        {/* Right Content: Visual Mockup */}
+        <div className="w-full max-w-lg flex justify-center">
+            {/* Recommendation: Replace this static image with a dynamic one showcasing your actual dashboard charts! */}
+            <img
+                src="./App_Mockup.png" // Using your existing image path
+                alt="ApexMoney App Dashboard Mockup"
+                className="w-[300px] sm:w-[350px] drop-shadow-2xl"
+            />
+        </div>
+      </section>
+      
+      {/* Social Proof Section (Moved out of the hero for better hierarchy) */}
+      <div className="text-center pb-12">
+        <p className="text-gray-600 font-medium">
+          Trusted by over 500,000+ users and teams worldwide
+        </p>
+        <div className="mt-6 flex justify-center items-center gap-8 opacity-70">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" alt="Notion" className="h-7" />
+            <img src="./mchip.png" alt="Mailchimp" className="h-7" />
+            <img src="./airtable.png" alt="Airtable" className="h-7" />
+            <img src="./gumroad.png" alt="Gumroad" className="h-7" />
+        </div>
       </div>
-    </section>
+    </>
   );
 };
-export default Hero
+
+export default Hero;
