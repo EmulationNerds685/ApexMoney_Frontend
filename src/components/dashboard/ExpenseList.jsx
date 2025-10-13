@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { DollarSign, Calendar, Edit, Trash2, PlusCircle, TrendingDown } from 'lucide-react';
+import { Calendar, Edit, Trash2, PlusCircle, TrendingDown } from 'lucide-react';
 
 const ExpenseList = ({ expenses, totalExpense, onEdit, onDelete }) => {
 
@@ -72,7 +72,7 @@ const ExpenseList = ({ expenses, totalExpense, onEdit, onDelete }) => {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 my-4">
-                      <DollarSign className="text-red-500" size={24} />
+                  
                       <p className="text-3xl font-bold text-gray-800">₹{expense.amount.toLocaleString()}</p>
                     </div>
                     <p className="text-gray-500 text-sm break-words mb-4 min-h-[40px]">{expense.notes || 'No notes provided.'}</p>

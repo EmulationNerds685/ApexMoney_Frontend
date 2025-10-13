@@ -72,7 +72,7 @@ const IncomeList = ({ incomes, totalIncome, onEdit, onDelete }) => {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 my-4">
-                      <DollarSign className="text-green-500" size={24} />
+                   
                       <p className="text-3xl font-bold text-gray-800">₹{income.amount.toLocaleString()}</p>
                     </div>
                     <p className="text-gray-500 text-sm break-words mb-4 min-h-[40px]">{income.notes || 'No notes provided.'}</p>

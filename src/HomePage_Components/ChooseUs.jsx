@@ -1,7 +1,4 @@
 import React from 'react';
-
-// --- Heroicon SVG Components ---
-
 const ClockIcon = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -19,16 +16,12 @@ const ShieldCheckIcon = (props) => (
     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.286zm0 13.036h.008v.008h-.008v-.008z" />
   </svg>
 );
-
-
-// --- Main ChooseUs Component ---
-
 export default function ChooseUs() {
   return (
     <div className="bg-white py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        
-        {/* Header Section */}
+
+        {}
         <div className="mx-auto max-w-2xl lg:text-center">
           <p className="text-base font-semibold leading-7 text-violet-600">Why Choose Us</p>
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
@@ -38,12 +31,12 @@ export default function ChooseUs() {
             Experience smarter, stress-free financial management backed by simplicity, security, and powerful insights.
           </p>
         </div>
-        
-        {/* Features Grid */}
+
+        {}
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
           <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
-            
-            {/* Feature 1 */}
+
+            {}
             <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-violet-100">
                 <ClockIcon className="h-6 w-6 text-violet-600" aria-hidden="true" />
@@ -53,8 +46,8 @@ export default function ChooseUs() {
                 Automate your financial tracking and reporting, so you can focus on growing your business - not crunching numbers.
               </dd>
             </div>
-            
-            {/* Feature 2 */}
+
+            {}
             <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-violet-100">
                 <ChartBarIcon className="h-6 w-6 text-violet-600" aria-hidden="true" />
@@ -65,7 +58,7 @@ export default function ChooseUs() {
               </dd>
             </div>
 
-            {/* Feature 3 */}
+            {}
             <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-violet-100">
                 <ShieldCheckIcon className="h-6 w-6 text-violet-600" aria-hidden="true" />
@@ -78,7 +71,7 @@ export default function ChooseUs() {
           </dl>
         </div>
 
-        {/* Buttons Section */}
+        {}
         <div className="mt-20 flex flex-col items-center gap-y-4">
             <button className="bg-violet-600 text-white font-semibold py-3 px-8 rounded-full transition-all duration-300 hover:bg-violet-700 hover:scale-105 shadow-lg shadow-violet-200">
                 See Full Features

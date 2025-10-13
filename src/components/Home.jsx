@@ -1,9 +1,9 @@
 import React from "react";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
-import Features from "./Features";
-import ChooseUs from "./ChooseUs";
-import HowItWorks from "./HowItWorks";
-import Pricing from "./Pricing";
+import Features from "../HomePage_Components/Features";
+import ChooseUs from "../HomePage_Components/ChooseUs";
+import HowItWorks from "../HomePage_Components/HowItWorks";
+import Pricing from "../HomePage_Components/Pricing";
 import {Link} from 'react-router-dom'
 
 const Home = () => {

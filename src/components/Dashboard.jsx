@@ -198,7 +198,7 @@ const Dashboard = () => {
 
       {}
       <main className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'md:ml-60' : 'md:ml-0'}`}>
-        <div className="p-4 sm:p-6 lg:p-8">
+       <div className="pt-15 px-4 pb-4 sm:p-6 lg:p-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
