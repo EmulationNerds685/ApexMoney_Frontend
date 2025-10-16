@@ -14,9 +14,9 @@ const Home = () => {
   return (
     <>
     <Hero/>
-    <Features/>
+     <Features/>
     <HowItWorks/>
-    <DashboardPreview/>
+   <DashboardPreview/>
     <ChooseUs/>
     <Pricing/>
     <FinalCTA/>
