@@ -134,13 +134,13 @@ const Header = ({ isMenuOpen, toggleMenu }) => {
   };
 
   return (
-    <header className="sticky top-4 z-30 px-4 sm:px-6">
-      <div className="relative w-full max-w-7xl mx-auto">
+    <header className="sticky top-4 z-30 px-4  sm:px-6">
+      <div className="relative w-full  max-w-7xl mx-auto">
         <motion.div
           initial={{ y: -100 }}
           animate={{ y: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="bg-white/80 backdrop-blur-lg shadow-md rounded-2xl sm:rounded-full px-4 sm:px-6 py-3 flex justify-between items-center"
+          className="bg-white/80 backdrop-blur-lg  shadow-md rounded-2xl sm:rounded-full px-4 sm:px-6 py-3 flex justify-between items-center"
         >
           {}
           <div className="flex items-center justify-between w-full lg:w-auto">

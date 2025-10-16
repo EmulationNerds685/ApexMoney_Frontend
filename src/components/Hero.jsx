@@ -3,18 +3,21 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
+import { TypingAnimation } from "./ui/typing-animation";
+import { BorderBeam } from "./ui/border-beam";
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+
+import { Particles } from "./ui/particles";
 
 const Hero = () => {
   return (
     <>
       <section className="flex flex-col-reverse md:flex-row items-center w-full max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24">
+        <Particles className="absolute ml-4"/>
         {/* Left Content: Headline, Sub-headline, and CTAs */}
         <div className="w-full max-w-xl text-center md:text-left mt-12 md:mt-0">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900">
-            <span className="block">Financial Clarity,</span>
-            <span className="block bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-              Effortlessly Achieved.
-            </span>
+            <TypingAnimation words={["Financial Clarity 💸","Effortlessly Achieved ✔️ "]}/>
           </h1>
 
           <p className="mt-6 max-w-md mx-auto md:mx-0 text-lg text-gray-600">
@@ -39,13 +42,24 @@ const Hero = () => {
         </div>
 
         {/* Right Content: Visual Mockup */}
-        <div className="w-full max-w-lg flex justify-center">
+        <div className="w-full  flex justify-center">
             {/* Recommendation: Replace this static image with a dynamic one showcasing your actual dashboard charts! */}
-            <img
-                src="./App_Mockup.png" // Using your existing image path
-                alt="ApexMoney App Dashboard Mockup"
-                className="w-[300px] sm:w-[350px] drop-shadow-2xl"
-            />
+            <div className="relative shadow-purple-500/50 box-shadow">
+            <DotLottieReact
+  src="/animation.lottie"
+  loop
+  autoplay
+  className="  w-[600px] h-[400px] mx-auto ml-4"
+  style={{
+    transform: "scale(1.1)",
+    imageRendering: "crisp-edges",
+    WebkitTransform: "translateZ(0)",
+  }}
+/>
+
+             
+             </div>
+           
         </div>
       </section>
       
