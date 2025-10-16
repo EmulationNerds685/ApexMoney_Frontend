@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import { TypingAnimation } from "./ui/typing-animation";
 import { BorderBeam } from "./ui/border-beam";
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 import { Particles } from "./ui/particles";
 
@@ -41,15 +42,22 @@ const Hero = () => {
         </div>
 
         {/* Right Content: Visual Mockup */}
-        <div className="w-full max-w-lg flex justify-center">
+        <div className="w-full  flex justify-center">
             {/* Recommendation: Replace this static image with a dynamic one showcasing your actual dashboard charts! */}
-            <div className="relative rounded-lg shadow-lg shadow-purple-500/50 box-shadow">
-            <img
-                src="./App_Mockup.png" // Using your existing image path
-                alt="ApexMoney App Dashboard Mockup"
-                 className="w-[300px] sm:w-[350px] drop-shadow-2xl rounded-lg"
-            />
-             <BorderBeam size={400} duration={12} delay={9} />
+            <div className="relative shadow-purple-500/50 box-shadow">
+            <DotLottieReact
+  src="/animation.lottie"
+  loop
+  autoplay
+  className="  w-[600px] h-[400px] mx-auto ml-4"
+  style={{
+    transform: "scale(1.1)",
+    imageRendering: "crisp-edges",
+    WebkitTransform: "translateZ(0)",
+  }}
+/>
+
+             
              </div>
            
         </div>
