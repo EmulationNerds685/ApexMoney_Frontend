@@ -39,6 +39,8 @@ const ReportExport = ({ expenses = [], incomes = [], user, userCurrency = 'INR' 
         setDateRange({ from, to: new Date().toISOString().slice(0, 10) });
     };
 
+    const filteredExpenses = filterByDate(expenses);
+    const filteredIncomes = filterByDate(incomes);
     const totalIncome = filteredIncomes.reduce((s, i) => s + convertCurrency(i.amount || 0, i.currency || 'INR', userCurrency), 0);
     const totalExpense = filteredExpenses.reduce((s, e) => s + convertCurrency(e.amount || 0, e.currency || 'INR', userCurrency), 0);
     const netSavings = totalIncome - totalExpense;
