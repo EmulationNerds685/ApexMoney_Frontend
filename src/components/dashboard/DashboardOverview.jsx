@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Bar, Pie, Line } from 'react-chartjs-2';
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, Wallet } from 'lucide-react';
-const StatCard = ({ title, amount, icon, color, bgColor }) => (
+const StatCard = ({ title, amount, icon, color, bgColor, symbol }) => (
   <motion.div
     className="bg-white p-5 rounded-2xl shadow-lg flex items-center space-x-4 transition-transform transform hover:-translate-y-1"
     whileHover={{ scale: 1.03 }}
@@ -12,7 +12,7 @@ const StatCard = ({ title, amount, icon, color, bgColor }) => (
     </div>
     <div>
       <p className="text-sm font-medium text-gray-500">{title}</p>
-      <h3 className="text-2xl font-bold text-gray-800">₹{amount.toLocaleString()}</h3>
+      <h3 className="text-2xl font-bold text-gray-800">{symbol || '₹'}{amount.toLocaleString()}</h3>
     </div>
   </motion.div>
 );
@@ -27,7 +27,12 @@ const ChartCard = ({ title, children, className = '' }) => (
 
 const DashboardOverview = ({ user, pieData, barData, lineData, totalIncome, totalExpense }) => {
   const netSavings = totalIncome - totalExpense;
-const commonChartOptions = {
+
+  const currencySymbols = { INR: '₹', USD: '$', EUR: '€', GBP: '£', JPY: '¥', AUD: 'A$', CAD: 'C$', SGD: 'S$', AED: 'د.إ', CHF: 'Fr' };
+  const getSymbol = (currency) => currencySymbols[currency] || '₹';
+  const userSymbol = useMemo(() => getSymbol(user?.preferences?.currency || 'INR'), [user]);
+
+  const commonChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     interaction: {
@@ -98,8 +103,8 @@ const commonChartOptions = {
             family: "'Inter', sans-serif",
           },
 
-          callback: function(value) {
-            return '₹' + value.toLocaleString();
+          callback: function (value) {
+            return userSymbol + value.toLocaleString();
           }
         },
         border: {
@@ -121,7 +126,7 @@ const commonChartOptions = {
         borderRadius: 8,
       }
     }
-};
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -140,10 +145,10 @@ const commonChartOptions = {
 
   return (
     <motion.div
-        className="bg-slate-50 p-4 sm:p-6 rounded-2xl min-h-screen"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
+      className="bg-slate-50 p-4 sm:p-6 rounded-2xl min-h-screen"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
     >
       <motion.h2
         className="text-3xl font-bold text-gray-800 mb-6"
@@ -152,7 +157,7 @@ const commonChartOptions = {
         Welcome Back, <span className="text-indigo-600">{user?.name || user?.email}</span> 👋
       </motion.h2>
 
-      {}
+      { }
       <motion.div
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
         variants={containerVariants}
@@ -164,6 +169,7 @@ const commonChartOptions = {
             icon={<TrendingUp />}
             color="text-green-600"
             bgColor="bg-green-100"
+            symbol={userSymbol}
           />
         </motion.div>
         <motion.div variants={itemVariants}>
@@ -173,6 +179,7 @@ const commonChartOptions = {
             icon={<TrendingDown />}
             color="text-red-600"
             bgColor="bg-red-100"
+            symbol={userSymbol}
           />
         </motion.div>
         <motion.div variants={itemVariants}>
@@ -182,31 +189,32 @@ const commonChartOptions = {
             icon={<Wallet />}
             color="text-indigo-600"
             bgColor="bg-indigo-100"
+            symbol={userSymbol}
           />
         </motion.div>
       </motion.div>
 
-      {}
+      { }
       <motion.div
         className="grid grid-cols-1 lg:grid-cols-3 gap-6"
         variants={containerVariants}
       >
         <motion.div variants={itemVariants} className="lg:col-span-2">
-            <ChartCard title="Income Over Time">
-                <Line data={lineData} options={commonChartOptions} />
-            </ChartCard>
+          <ChartCard title="Income Over Time">
+            <Line data={lineData} options={commonChartOptions} />
+          </ChartCard>
         </motion.div>
 
         <motion.div variants={itemVariants}>
-            <ChartCard title="Income vs Expense">
-                <Pie data={pieData} options={{ ...commonChartOptions, scales: {} }} />
-            </ChartCard>
+          <ChartCard title="Income vs Expense">
+            <Pie data={pieData} options={{ ...commonChartOptions, scales: {} }} />
+          </ChartCard>
         </motion.div>
 
         <motion.div variants={itemVariants} className="lg:col-span-3">
-             <ChartCard title="Expense by Category">
-                <Bar data={barData} options={commonChartOptions} />
-            </ChartCard>
+          <ChartCard title="Expense by Category">
+            <Bar data={barData} options={commonChartOptions} />
+          </ChartCard>
         </motion.div>
       </motion.div>
     </motion.div>

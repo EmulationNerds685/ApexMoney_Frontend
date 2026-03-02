@@ -15,6 +15,10 @@ export function AddIncomeForm() {
     notes: "",
   };
 
+  const [tags, setTags] = useState([]);
+  const [tagInput, setTagInput] = useState('');
+  const popularTags = ['recurring', 'one-time', 'passive', 'active', 'bonus', 'freelance', 'investment', 'side-hustle'];
+
   const [formData, setFormData] = useState(initialState);
   const [showToast, setShowToast] = useState(false);
 
@@ -50,12 +54,14 @@ export function AddIncomeForm() {
         userId: user._id,
         ...formData,
         amount: parseFloat(formData.amount),
+        tags,
       });
 
       if (response.data) {
 
         setShowToast(true);
         setFormData(initialState);
+        setTags([]);
         localStorage.setItem('dashboardActiveTab', 'incomeList');
         navigate('/dashboard');
 
@@ -174,6 +180,42 @@ export function AddIncomeForm() {
               className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
               placeholder="e.g., Salary for October"
             ></textarea>
+          </div>
+          {/* Tags */}
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">Tags</label>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {tags.map((tag, i) => (
+                <span key={i} className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium">
+                  #{tag}
+                  <button type="button" onClick={() => setTags(tags.filter((_, idx) => idx !== i))} className="text-emerald-400 hover:text-emerald-700 ml-0.5 text-xs font-bold">✕</button>
+                </span>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && tagInput.trim()) {
+                    e.preventDefault();
+                    const t = tagInput.trim().toLowerCase();
+                    if (!tags.includes(t)) setTags([...tags, t]);
+                    setTagInput('');
+                  }
+                }}
+                className="flex-1 p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition text-sm"
+                placeholder="Type tag & press Enter"
+              />
+            </div>
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {popularTags.filter(t => !tags.includes(t)).slice(0, 5).map(t => (
+                <button key={t} type="button" onClick={() => setTags([...tags, t])} className="px-2 py-0.5 text-xs bg-gray-100 text-gray-500 rounded-full hover:bg-emerald-50 hover:text-emerald-600 transition">
+                  +{t}
+                </button>
+              ))}
+            </div>
           </div>
 
           <button
