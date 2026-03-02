@@ -15,6 +15,10 @@ import ExpenseList from './dashboard/ExpenseList';
 import IncomeList from './dashboard/IncomeList';
 import EditExpenseModal from './dashboard/EditExpenseModal';
 import EditIncomeModal from './dashboard/EditIncomeModal';
+import ReportExport from './dashboard/ReportExport';
+import FinancialGoals from './goals/FinancialGoals';
+import SmartInsights from './ai/SmartInsights';
+import SubscriptionTracker from './subscriptions/SubscriptionTracker';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title);
 const LoadingSpinner = () => (
@@ -24,7 +28,7 @@ const LoadingSpinner = () => (
 );
 
 const Dashboard = () => {
-const { user, loading: userLoading } = useUser();
+  const { user, loading: userLoading } = useUser();
   const navigate = useNavigate();
   const [expenses, setExpenses] = useState([]);
   const [incomes, setIncomes] = useState([]);
@@ -36,14 +40,14 @@ const { user, loading: userLoading } = useUser();
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 768);
   useEffect(() => {
-  if (!userLoading) {
-    if (!user) {
-      navigate('/');
-    } else {
-      setCheckingAuth(false);
+    if (!userLoading) {
+      if (!user) {
+        navigate('/');
+      } else {
+        setCheckingAuth(false);
+      }
     }
-  }
-}, [user, userLoading, navigate]);
+  }, [user, userLoading, navigate]);
 
   useEffect(() => {
     if (user) fetchData();
@@ -167,13 +171,13 @@ const { user, loading: userLoading } = useUser();
       tension: 0.4,
     }],
   }), [incomes]);
-if (checkingAuth || loading || userLoading) return <LoadingSpinner />;
+  if (checkingAuth || loading || userLoading) return <LoadingSpinner />;
 
   if (!user) return null;
 
   const renderContent = () => {
     if (expenses.length === 0 && incomes.length === 0) {
-        return <WelcomeEmptyState user={user} handleTabChange={setActiveTab} />;
+      return <WelcomeEmptyState user={user} handleTabChange={setActiveTab} />;
     }
 
     switch (activeTab) {
@@ -183,6 +187,14 @@ if (checkingAuth || loading || userLoading) return <LoadingSpinner />;
         return <ExpenseList expenses={expenses} totalExpense={totalExpense} onEdit={setEditingExpense} onDelete={(id) => handleDelete('expense', id)} />;
       case 'incomeList':
         return <IncomeList incomes={incomes} totalIncome={totalIncome} onEdit={setEditingIncome} onDelete={(id) => handleDelete('income', id)} />;
+      case 'goals':
+        return <FinancialGoals userId={user._id} />;
+      case 'insights':
+        return <SmartInsights userId={user._id} />;
+      case 'subscriptions':
+        return <SubscriptionTracker userId={user._id} />;
+      case 'reports':
+        return <ReportExport expenses={expenses} incomes={incomes} user={user} />;
       case 'income':
         return <div className="bg-white p-6 rounded-2xl shadow-lg h-[50vh]"><h2 className="text-2xl font-bold text-gray-700 mb-6">Income Data</h2><Line data={lineData} /></div>;
       case 'expense':
@@ -194,14 +206,14 @@ if (checkingAuth || loading || userLoading) return <LoadingSpinner />;
 
   return (
     <div className="flex min-h-screen bg-slate-100 font-sans">
-      {}
+      { }
       <Toaster position="top-center" reverseOrder={false} />
 
-      <DashboardSidebar activeTab={activeTab} handleTabChange={setActiveTab}   isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen}/>
+      <DashboardSidebar activeTab={activeTab} handleTabChange={setActiveTab} isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
-      {}
+      { }
       <main className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'md:ml-60' : 'md:ml-0'}`}>
-       <div className="pt-15 px-4 pb-4 sm:p-6 lg:p-8">
+        <div className="pt-15 px-4 pb-4 sm:p-6 lg:p-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
