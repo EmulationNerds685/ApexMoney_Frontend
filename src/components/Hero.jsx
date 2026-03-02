@@ -1,27 +1,29 @@
 // src/components/Hero.jsx
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import { TypingAnimation } from "./ui/typing-animation";
-import { BorderBeam } from "./ui/border-beam";
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-
 import { Particles } from "./ui/particles";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 const Hero = () => {
   return (
     <>
-      <section className="flex flex-col-reverse md:flex-row items-center w-full max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24">
-        <Particles className="absolute ml-4"/>
-        {/* Left Content: Headline, Sub-headline, and CTAs */}
-        <div className="w-full max-w-xl text-center md:text-left mt-12 md:mt-0">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900">
-            <TypingAnimation words={["Financial Clarity 💸","Effortlessly Achieved ✔️ "]}/>
+      <section className="relative flex flex-col-reverse md:flex-row items-center justify-between w-full max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24 overflow-hidden">
+        <Particles className="absolute inset-0 -z-10" />
+
+        {/* Left Content */}
+        <div className="w-full md:w-1/2 text-center md:text-left mt-12 md:mt-0 flex flex-col items-center md:items-start justify-center">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 leading-tight">
+            <TypingAnimation
+              words={["Financial Clarity 💸", "Effortlessly Achieved ✔️"]}
+            />
           </h1>
 
           <p className="mt-6 max-w-md mx-auto md:mx-0 text-lg text-gray-600">
-            Stop wondering where your money goes. ApexMoney is the simple, smart app for tracking expenses, managing budgets, and growing your savings.
+            Stop wondering where your money goes. ApexMoney is the simple, smart
+            app for tracking expenses, managing budgets, and growing your
+            savings.
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
@@ -32,8 +34,9 @@ const Hero = () => {
               Start for Free
               <ArrowRightIcon className="h-5 w-5 ml-2 transition-transform group-hover:translate-x-1" />
             </Link>
+
             <a
-              href="#demo" // Placeholder link for a future "Demo" section
+              href="#demo"
               className="inline-flex items-center justify-center rounded-md bg-white px-6 py-3 text-base font-semibold text-purple-600 ring-1 ring-inset ring-purple-200 hover:bg-purple-50 transition"
             >
               See a Demo
@@ -41,38 +44,40 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* Right Content: Visual Mockup */}
-        <div className="w-full  flex justify-center">
-            {/* Recommendation: Replace this static image with a dynamic one showcasing your actual dashboard charts! */}
-            <div className="relative shadow-purple-500/50 box-shadow">
+        {/* Right Content: Lottie Animation */}
+        <div className="w-full md:w-1/2 flex justify-center items-center mt-10 md:mt-0 overflow-hidden">
+          <div className="relative w-full flex justify-center items-center overflow-hidden">
             <DotLottieReact
-  src="/animation.lottie"
-  loop
-  autoplay
-  className="  w-[600px] h-[400px] mx-auto ml-4"
-  style={{
-    transform: "scale(1.1)",
-    imageRendering: "crisp-edges",
-    WebkitTransform: "translateZ(0)",
-  }}
-/>
-
-             
-             </div>
-           
+              src="/animation.lottie"
+              loop
+              autoplay
+              className="
+                w-full max-w-[600px] h-auto
+                scale-[1.25] sm:scale-[1.15] md:scale-[1.05]
+                transition-transform duration-300
+              "
+              style={{
+                transformOrigin: "center",
+              }}
+            />
+          </div>
         </div>
       </section>
-      
-      {/* Social Proof Section (Moved out of the hero for better hierarchy) */}
-      <div className="text-center pb-12">
+
+      {/* Social Proof Section */}
+      <div className="text-center pb-12 px-4">
         <p className="text-gray-600 font-medium">
           Trusted by over 500,000+ users and teams worldwide
         </p>
-        <div className="mt-6 flex justify-center items-center gap-8 opacity-70">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" alt="Notion" className="h-7" />
-            <img src="./mchip.png" alt="Mailchimp" className="h-7" />
-            <img src="./airtable.png" alt="Airtable" className="h-7" />
-            <img src="./gumroad.png" alt="Gumroad" className="h-7" />
+        <div className="mt-6 flex flex-wrap justify-center items-center gap-8 opacity-70">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg"
+            alt="Notion"
+            className="h-7"
+          />
+          <img src="./mchip.png" alt="Mailchimp" className="h-7" />
+          <img src="./airtable.png" alt="Airtable" className="h-7" />
+          <img src="./gumroad.png" alt="Gumroad" className="h-7" />
         </div>
       </div>
     </>
