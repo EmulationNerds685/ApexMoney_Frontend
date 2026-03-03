@@ -228,36 +228,36 @@ const SmartInsights = ({ userId }) => {
                     ))}
                 </div>
 
-                <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div className="flex-1 w-full">
-                        <div className="flex items-center gap-3 mb-2">
+                <div className="relative flex flex-col md:flex-row items-center md:items-start justify-between gap-6 md:gap-8 pt-6 md:pt-0">
+                    <div className="flex-1 w-full z-10">
+                        <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-3 pr-10 md:pr-0">
                             <span className="text-2xl">🧠</span>
                             <h1 className="text-2xl md:text-3xl font-black text-white">Apex AI Insights</h1>
-                            <span className="px-2 py-0.5 rounded-full bg-indigo-500/30 text-indigo-300 text-[10px] font-bold uppercase tracking-wider border border-indigo-500/30">
+                            <span className="px-2 py-0.5 rounded-full bg-indigo-500/30 text-indigo-300 text-[10px] sm:text-xs font-bold uppercase tracking-wider border border-indigo-500/30 whitespace-nowrap">
                                 Powered by Groq AI
                             </span>
                         </div>
-                        <p className="text-gray-400 text-sm max-w-lg">
+                        <p className="text-gray-400 text-sm max-w-lg mb-4">
                             Your personal AI financial advisor analyzing every transaction to help you save more and spend smarter.
                         </p>
 
                         {summary && (
-                            <div className="flex flex-wrap gap-3 mt-4">
-                                <div className="px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                                <div className="px-3 md:px-4 py-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
                                     <div className="text-[10px] text-emerald-400 uppercase tracking-wider font-medium">Income</div>
-                                    <div className="text-lg font-bold text-emerald-400">
+                                    <div className="text-base sm:text-lg font-bold text-emerald-400 truncate">
                                         <AnimatedNumber value={summary.totalIncome} prefix="₹" />
                                     </div>
                                 </div>
-                                <div className="px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20">
+                                <div className="px-3 md:px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20">
                                     <div className="text-[10px] text-red-400 uppercase tracking-wider font-medium">Expenses</div>
-                                    <div className="text-lg font-bold text-red-400">
+                                    <div className="text-base sm:text-lg font-bold text-red-400 truncate">
                                         <AnimatedNumber value={summary.totalExpenses} prefix="₹" />
                                     </div>
                                 </div>
-                                <div className="px-4 py-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+                                <div className="px-3 md:px-4 py-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 col-span-2 lg:col-span-1">
                                     <div className="text-[10px] text-indigo-400 uppercase tracking-wider font-medium">Savings Rate</div>
-                                    <div className="text-lg font-bold text-indigo-400">
+                                    <div className="text-base sm:text-lg font-bold text-indigo-400 truncate">
                                         <AnimatedNumber value={summary.savingsRate} suffix="%" />
                                     </div>
                                 </div>
@@ -266,7 +266,7 @@ const SmartInsights = ({ userId }) => {
                     </div>
 
                     {/* Health Score Ring */}
-                    <div className="flex-shrink-0 self-center md:self-auto">
+                    <div className="flex-shrink-0 self-center md:self-auto pb-4 md:pb-0">
                         <div className="text-center mb-1">
                             <span className="text-[10px] text-gray-400 uppercase tracking-widest font-medium">Financial Health</span>
                         </div>
@@ -375,20 +375,20 @@ const SmartInsights = ({ userId }) => {
                                                 </button>
                                             </div>
 
-                                            <p className="text-gray-600 text-sm leading-relaxed mb-4 pl-[52px]">
+                                            <p className="text-gray-600 text-sm leading-relaxed mb-4 sm:pl-[52px]">
                                                 {insight.content}
                                             </p>
 
                                             {/* Recommendations */}
                                             {insight.recommendations?.length > 0 && (
-                                                <div className="pl-[52px] space-y-2">
+                                                <div className="sm:pl-[52px] space-y-2">
                                                     {insight.recommendations.map((rec, idx) => (
                                                         <div key={idx} className="flex items-start gap-2 bg-indigo-50 rounded-xl p-3">
                                                             <div className="flex-shrink-0 w-5 h-5 bg-indigo-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold mt-0.5">
                                                                 {idx + 1}
                                                             </div>
                                                             <div className="flex-1 min-w-0">
-                                                                <p className="text-sm font-medium text-gray-800">{rec.action}</p>
+                                                                <p className="text-sm font-medium text-gray-800 break-words">{rec.action}</p>
                                                                 {rec.estimatedImpact && (
                                                                     <p className="text-xs text-emerald-600 mt-0.5 font-medium">✦ {rec.estimatedImpact}</p>
                                                                 )}
@@ -593,18 +593,18 @@ const SmartInsights = ({ userId }) => {
                                 <div className="bg-purple-500 flex-[3]" title="Wants (30%)" />
                                 <div className="bg-emerald-500 flex-[2]" title="Savings (20%)" />
                             </div>
-                            <div className="grid grid-cols-3 gap-3 mb-6">
-                                <div className="text-center p-3 rounded-xl bg-blue-50 border border-blue-100">
-                                    <div className="text-[10px] text-blue-500 uppercase tracking-wider font-bold">Needs (50%)</div>
-                                    <div className="text-lg font-black text-blue-600">₹{parseFloat(budgetRecs.allocations.needs).toLocaleString()}</div>
+                            <div className="grid grid-cols-3 gap-2 md:gap-3 mb-6">
+                                <div className="text-center p-2 sm:p-3 rounded-xl bg-blue-50 border border-blue-100 flex flex-col justify-center">
+                                    <div className="text-[10px] text-blue-500 uppercase tracking-wider font-bold truncate">Needs (50%)</div>
+                                    <div className="text-sm sm:text-base md:text-lg font-black text-blue-600 truncate">₹{parseFloat(budgetRecs.allocations.needs).toLocaleString()}</div>
                                 </div>
-                                <div className="text-center p-3 rounded-xl bg-purple-50 border border-purple-100">
-                                    <div className="text-[10px] text-purple-500 uppercase tracking-wider font-bold">Wants (30%)</div>
-                                    <div className="text-lg font-black text-purple-600">₹{parseFloat(budgetRecs.allocations.wants).toLocaleString()}</div>
+                                <div className="text-center p-2 sm:p-3 rounded-xl bg-purple-50 border border-purple-100 flex flex-col justify-center">
+                                    <div className="text-[10px] text-purple-500 uppercase tracking-wider font-bold truncate">Wants (30%)</div>
+                                    <div className="text-sm sm:text-base md:text-lg font-black text-purple-600 truncate">₹{parseFloat(budgetRecs.allocations.wants).toLocaleString()}</div>
                                 </div>
-                                <div className="text-center p-3 rounded-xl bg-emerald-50 border border-emerald-100">
-                                    <div className="text-[10px] text-emerald-500 uppercase tracking-wider font-bold">Savings (20%)</div>
-                                    <div className="text-lg font-black text-emerald-600">₹{parseFloat(budgetRecs.allocations.savings).toLocaleString()}</div>
+                                <div className="text-center p-2 sm:p-3 rounded-xl bg-emerald-50 border border-emerald-100 flex flex-col justify-center">
+                                    <div className="text-[10px] text-emerald-500 uppercase tracking-wider font-bold truncate">Savings (20%)</div>
+                                    <div className="text-sm sm:text-base md:text-lg font-black text-emerald-600 truncate">₹{parseFloat(budgetRecs.allocations.savings).toLocaleString()}</div>
                                 </div>
                             </div>
 
