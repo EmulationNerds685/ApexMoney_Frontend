@@ -38,6 +38,7 @@ const Dashboard = () => {
   const [editingExpense, setEditingExpense] = useState(null);
   const [editingIncome, setEditingIncome] = useState(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [selectedCurrency, setSelectedCurrency] = useState('INR');
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 768);
   useEffect(() => {
@@ -55,6 +56,18 @@ const Dashboard = () => {
   }, [user]);
 
   useEffect(() => {
+    if (!user) return;
+    const storedCurrency = localStorage.getItem('dashboardCurrency');
+    if (storedCurrency) {
+      setSelectedCurrency(storedCurrency);
+    } else if (user.preferences?.currency) {
+      setSelectedCurrency(user.preferences.currency);
+    } else {
+      setSelectedCurrency('INR');
+    }
+  }, [user]);
+
+  useEffect(() => {
     const savedTab = localStorage.getItem('dashboardActiveTab');
     if (savedTab) setActiveTab(savedTab);
   }, []);
@@ -62,6 +75,11 @@ const Dashboard = () => {
   useEffect(() => {
     localStorage.setItem('dashboardActiveTab', activeTab);
   }, [activeTab]);
+
+  const handleCurrencyChange = (currency) => {
+    setSelectedCurrency(currency);
+    localStorage.setItem('dashboardCurrency', currency);
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -137,12 +155,10 @@ const Dashboard = () => {
       error: `Failed to update ${type}.`,
     });
   };
-  const userCurrency = user?.preferences?.currency || 'INR';
-
   const { totalIncome, totalExpense } = useMemo(() => ({
-    totalIncome: incomes.reduce((sum, income) => sum + convertCurrency(income.amount || 0, income.currency || 'INR', userCurrency), 0),
-    totalExpense: expenses.reduce((sum, expense) => sum + convertCurrency(expense.amount || 0, expense.currency || 'INR', userCurrency), 0),
-  }), [incomes, expenses, userCurrency]);
+    totalIncome: incomes.reduce((sum, income) => sum + convertCurrency(income.amount || 0, income.currency || 'INR', selectedCurrency), 0),
+    totalExpense: expenses.reduce((sum, expense) => sum + convertCurrency(expense.amount || 0, expense.currency || 'INR', selectedCurrency), 0),
+  }), [incomes, expenses, selectedCurrency]);
 
   const pieData = useMemo(() => ({
     labels: ['Income', 'Expense'],
@@ -155,25 +171,25 @@ const Dashboard = () => {
       labels: categories,
       datasets: [{
         label: 'Expense by Category',
-        data: categories.map(cat => expenses.filter(e => e.category === cat).reduce((sum, e) => sum + convertCurrency(e.amount || 0, e.currency || 'INR', userCurrency), 0)),
+        data: categories.map(cat => expenses.filter(e => e.category === cat).reduce((sum, e) => sum + convertCurrency(e.amount || 0, e.currency || 'INR', selectedCurrency), 0)),
         backgroundColor: '#8B5CF6',
         borderRadius: 8,
         maxBarThickness: 60,
       }],
     };
-  }, [expenses, userCurrency]);
+  }, [expenses, selectedCurrency]);
 
   const lineData = useMemo(() => ({
     labels: incomes.map(t => new Date(t.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })),
     datasets: [{
       label: 'Income Over Time',
-      data: incomes.map(t => convertCurrency(t.amount || 0, t.currency || 'INR', userCurrency)),
+      data: incomes.map(t => convertCurrency(t.amount || 0, t.currency || 'INR', selectedCurrency)),
       borderColor: '#3B82F6',
       backgroundColor: 'rgba(59, 130, 246, 0.1)',
       fill: true,
       tension: 0.4,
     }],
-  }), [incomes, userCurrency]);
+  }), [incomes, selectedCurrency]);
   if (checkingAuth || loading || userLoading) return <LoadingSpinner />;
 
   if (!user) return null;
@@ -185,11 +201,38 @@ const Dashboard = () => {
 
     switch (activeTab) {
       case 'total':
-        return <DashboardOverview user={user} pieData={pieData} barData={barData} lineData={lineData} totalIncome={totalIncome} totalExpense={totalExpense} userCurrency={userCurrency} />;
+        return (
+          <DashboardOverview
+            user={user}
+            pieData={pieData}
+            barData={barData}
+            lineData={lineData}
+            totalIncome={totalIncome}
+            totalExpense={totalExpense}
+            userCurrency={selectedCurrency}
+            onCurrencyChange={handleCurrencyChange}
+          />
+        );
       case 'expenseList':
-        return <ExpenseList expenses={expenses} totalExpense={totalExpense} userCurrency={userCurrency} onEdit={setEditingExpense} onDelete={(id) => handleDelete('expense', id)} />;
+        return (
+          <ExpenseList
+            expenses={expenses}
+            totalExpense={totalExpense}
+            userCurrency={selectedCurrency}
+            onEdit={setEditingExpense}
+            onDelete={(id) => handleDelete('expense', id)}
+          />
+        );
       case 'incomeList':
-        return <IncomeList incomes={incomes} totalIncome={totalIncome} userCurrency={userCurrency} onEdit={setEditingIncome} onDelete={(id) => handleDelete('income', id)} />;
+        return (
+          <IncomeList
+            incomes={incomes}
+            totalIncome={totalIncome}
+            userCurrency={selectedCurrency}
+            onEdit={setEditingIncome}
+            onDelete={(id) => handleDelete('income', id)}
+          />
+        );
       case 'goals':
         return <FinancialGoals userId={user._id} />;
       case 'insights':
@@ -197,7 +240,7 @@ const Dashboard = () => {
       case 'subscriptions':
         return <SubscriptionTracker userId={user._id} />;
       case 'reports':
-        return <ReportExport expenses={expenses} incomes={incomes} user={user} userCurrency={userCurrency} />;
+        return <ReportExport expenses={expenses} incomes={incomes} user={user} userCurrency={selectedCurrency} />;
       case 'income':
         return <div className="bg-white p-6 rounded-2xl shadow-lg h-[50vh]"><h2 className="text-2xl font-bold text-gray-700 mb-6">Income Data</h2><Line data={lineData} /></div>;
       case 'expense':

@@ -66,8 +66,13 @@ const ExpenseList = ({ expenses, totalExpense, userCurrency, onEdit, onDelete })
       <motion.div variants={itemVariants} className="flex flex-wrap justify-between items-center gap-4 mb-6">
         <h2 className="text-3xl font-bold text-gray-800">Expense Tracker</h2>
         <Link to="/expense">
-          <motion.button className="flex items-center gap-2 bg-red-500 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <PlusCircle size={20} />Add Expense
+          <motion.button
+            className="flex items-center gap-2 bg-red-500 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <PlusCircle size={20} />
+            Add Expense
           </motion.button>
         </Link>
       </motion.div>
@@ -188,7 +193,12 @@ const ExpenseList = ({ expenses, totalExpense, userCurrency, onEdit, onDelete })
                       </div>
                     </div>
                     <div className="flex items-center gap-2 my-4">
-                      <p className="text-3xl font-bold text-gray-800">{getSymbol(expense.currency)}{expense.amount.toLocaleString()}</p>
+                      <p className="text-3xl font-bold text-gray-800">
+                        {getSymbol(userCurrency)}
+                        {convertCurrency(expense.amount || 0, expense.currency || 'INR', userCurrency).toLocaleString(undefined, {
+                          maximumFractionDigits: 2,
+                        })}
+                      </p>
                     </div>
                     <p className="text-gray-500 text-sm break-words mb-3 min-h-[40px]">{expense.notes || 'No notes provided.'}</p>
 
