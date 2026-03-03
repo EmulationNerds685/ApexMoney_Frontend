@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ExpenseToast from "../toast/ExpenseToast";
 import ReceiptScanner from "./ReceiptScanner";
+import { convertCurrency } from "../utils/currencyConversion";
 
 export function AddExpenseForm({ expenseToEdit, onFormSubmit, onCancelEdit }) {
   const backend = import.meta.env.VITE_BACKENDURL;
@@ -30,14 +31,32 @@ export function AddExpenseForm({ expenseToEdit, onFormSubmit, onCancelEdit }) {
   const [showScanner, setShowScanner] = useState(false);
 
   const handleScanComplete = (data) => {
+    const dashboardCurrency = localStorage.getItem('dashboardCurrency');
+    const preferredCurrency =
+      dashboardCurrency ||
+      user?.preferences?.currency ||
+      currency ||
+      'INR';
+
+    let convertedAmount = data.amount;
+
+    if (data.amount && data.currency && data.currency !== preferredCurrency) {
+      convertedAmount = convertCurrency(
+        Number(data.amount) || 0,
+        data.currency,
+        preferredCurrency
+      );
+    }
+
     setFormData(prev => ({
       ...prev,
-      amount: data.amount || prev.amount,
+      amount: convertedAmount ?? prev.amount,
       category: data.category || prev.category,
       notes: data.notes || prev.notes,
       date: data.date || prev.date,
     }));
-    if (data.currency) setCurrency(data.currency);
+
+    setCurrency(preferredCurrency);
     setShowScanner(false);
   };
 
@@ -51,10 +70,25 @@ export function AddExpenseForm({ expenseToEdit, onFormSubmit, onCancelEdit }) {
         notes: expenseToEdit.notes || "",
       });
       setTags(expenseToEdit.tags || []);
+      if (expenseToEdit.currency) {
+        setCurrency(expenseToEdit.currency);
+      }
     } else {
       setFormData(initialState);
     }
   }, [expenseToEdit]);
+
+  useEffect(() => {
+    if (expenseToEdit) return;
+    const dashboardCurrency = localStorage.getItem('dashboardCurrency');
+    if (dashboardCurrency) {
+      setCurrency(dashboardCurrency);
+    } else if (user?.preferences?.currency) {
+      setCurrency(user.preferences.currency);
+    } else {
+      setCurrency('INR');
+    }
+  }, [user, expenseToEdit]);
 
   useEffect(() => {
     if (showToast) {

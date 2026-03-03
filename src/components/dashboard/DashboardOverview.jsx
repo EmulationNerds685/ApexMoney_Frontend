@@ -25,12 +25,12 @@ const ChartCard = ({ title, children, className = '' }) => (
   </div>
 );
 
-const DashboardOverview = ({ user, pieData, barData, lineData, totalIncome, totalExpense }) => {
+const DashboardOverview = ({ user, pieData, barData, lineData, totalIncome, totalExpense, userCurrency, onCurrencyChange }) => {
   const netSavings = totalIncome - totalExpense;
 
   const currencySymbols = { INR: '₹', USD: '$', EUR: '€', GBP: '£', JPY: '¥', AUD: 'A$', CAD: 'C$', SGD: 'S$', AED: 'د.إ', CHF: 'Fr' };
   const getSymbol = (currency) => currencySymbols[currency] || '₹';
-  const userSymbol = useMemo(() => getSymbol(user?.preferences?.currency || 'INR'), [user]);
+  const userSymbol = useMemo(() => getSymbol(userCurrency || 'INR'), [userCurrency]);
 
   const commonChartOptions = {
     responsive: true,
@@ -150,12 +150,28 @@ const DashboardOverview = ({ user, pieData, barData, lineData, totalIncome, tota
       initial="hidden"
       animate="visible"
     >
-      <motion.h2
-        className="text-3xl font-bold text-gray-800 mb-6"
+      <motion.div
+        className="flex flex-wrap justify-between items-center gap-4 mb-6"
         variants={itemVariants}
       >
-        Welcome Back, <span className="text-indigo-600">{user?.name || user?.email}</span> 👋
-      </motion.h2>
+        <h2 className="text-3xl font-bold text-gray-800">
+          Welcome Back, <span className="text-indigo-600">{user?.name || user?.email}</span> 👋
+        </h2>
+        <div className="flex items-center gap-2 text-sm text-gray-600">
+          <span className="font-medium">Dashboard currency:</span>
+          <select
+            value={userCurrency}
+            onChange={(e) => onCurrencyChange && onCurrencyChange(e.target.value)}
+            className="px-2 py-1 rounded-lg border border-gray-200 bg-white text-xs font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400"
+          >
+            {Object.keys(currencySymbols).map((code) => (
+              <option key={code} value={code}>
+                {code} ({getSymbol(code)})
+              </option>
+            ))}
+          </select>
+        </div>
+      </motion.div>
 
       { }
       <motion.div
