@@ -207,7 +207,7 @@ const SmartInsights = ({ userId }) => {
 
     // ─── Main Render ──────────────────────────────────────────────────
     return (
-        <div className="space-y-6 max-w-6xl mx-auto">
+        <div className="space-y-6 max-w-6xl mx-auto px-3 sm:px-0">
 
             {/* ══════════════════ HERO BANNER ══════════════════ */}
             <motion.div
@@ -228,8 +228,8 @@ const SmartInsights = ({ userId }) => {
                     ))}
                 </div>
 
-                <div className="relative flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div className="flex-1">
+                <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div className="flex-1 w-full">
                         <div className="flex items-center gap-3 mb-2">
                             <span className="text-2xl">🧠</span>
                             <h1 className="text-2xl md:text-3xl font-black text-white">Apex AI Insights</h1>
@@ -266,7 +266,7 @@ const SmartInsights = ({ userId }) => {
                     </div>
 
                     {/* Health Score Ring */}
-                    <div className="flex-shrink-0">
+                    <div className="flex-shrink-0 self-center md:self-auto">
                         <div className="text-center mb-1">
                             <span className="text-[10px] text-gray-400 uppercase tracking-widest font-medium">Financial Health</span>
                         </div>
