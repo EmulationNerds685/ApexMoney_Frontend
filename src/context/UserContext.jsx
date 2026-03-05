@@ -13,11 +13,13 @@ export const UserProvider = ({ children }) => {
     const fetchUser = async () => {
       try {
         const res = await axios.get(`${api_url}/user/session`, {
+          timeout: 10000,
           withCredentials: true,
         });
 
         setUser(res.data.user);
       } catch (err) {
+        console.error('Session check failed:', err.response?.data || err.message);
         setUser(null);
       } finally {
         setLoading(false);
@@ -29,6 +31,7 @@ export const UserProvider = ({ children }) => {
 
   const signup = async (userData) => {
     const res = await axios.post(`${api_url}/user/signup`, userData, {
+      timeout: 15000,
       withCredentials: true,
     });
 
@@ -40,6 +43,7 @@ export const UserProvider = ({ children }) => {
   };
   const logout = async () => {
     await axios.post(`${api_url}/user/logout`, null, {
+      timeout: 10000,
       withCredentials: true,
     });
     setUser(null);
