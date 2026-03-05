@@ -195,12 +195,18 @@ export const Signup = () => {
             if (isForgotPassword) {
                 if (resetStep === 'request') {
                     const API_URL = `${import.meta.env.VITE_BACKENDURL}/user/forgot-password`;
-                    await axios.post(API_URL, { email: formData.email });
+                    await axios.post(API_URL, { email: formData.email }, {
+                        timeout: 15000,
+                        withCredentials: true
+                    });
                     setResetStep('verify');
                     setSuccess('OTP sent to your email! Check your inbox.');
                 } else if (resetStep === 'verify') {
                     const API_URL = `${import.meta.env.VITE_BACKENDURL}/user/verify-otp`;
-                    await axios.post(API_URL, { email: formData.email, otp });
+                    await axios.post(API_URL, { email: formData.email, otp }, {
+                        timeout: 10000,
+                        withCredentials: true
+                    });
                     setResetStep('newPassword');
                     setSuccess('OTP verified! Now choose a new password.');
                 } else {
@@ -209,6 +215,9 @@ export const Signup = () => {
                         email: formData.email,
                         otp,
                         newPassword,
+                    }, {
+                        timeout: 10000,
+                        withCredentials: true
                     });
                     setSuccess('Password reset successfully! Please log in with your new password.');
                     setTimeout(() => {
@@ -226,6 +235,7 @@ export const Signup = () => {
                     email: formData.email,
                     password: formData.password
                 }, {
+                    timeout: 15000,
                     withCredentials: true
                 });
                 login(response.data.User);
@@ -239,7 +249,24 @@ export const Signup = () => {
                 navigate('/dashboard');
             }
         } catch (err) {
-            setError(err.response?.data?.message || err.message || 'An error occurred.');
+            console.error('Form submission error:', err);
+            let errorMessage = 'An error occurred.';
+            
+            if (err.code === 'ECONNABORTED') {
+                errorMessage = 'Request timed out. Please check your internet connection and try again.';
+            } else if (err.response?.status === 404) {
+                errorMessage = err.response?.data?.message || 'User not found.';
+            } else if (err.response?.status === 400) {
+                errorMessage = err.response?.data?.message || 'Invalid input. Please check your data.';
+            } else if (err.response?.status === 500) {
+                errorMessage = 'Server error. Please try again later.';
+            } else if (err.message === 'Network Error') {
+                errorMessage = 'Network error. Please check your internet connection.';
+            } else {
+                errorMessage = err.response?.data?.message || err.message || 'An error occurred.';
+            }
+            
+            setError(errorMessage);
         } finally {
             setIsLoading(false);
         }
