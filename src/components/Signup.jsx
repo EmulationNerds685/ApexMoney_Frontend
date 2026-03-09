@@ -196,7 +196,7 @@ export const Signup = () => {
                 if (resetStep === 'request') {
                     const API_URL = `${import.meta.env.VITE_BACKENDURL}/user/forgot-password`;
                     await axios.post(API_URL, { email: formData.email }, {
-                        timeout: 15000,
+                        timeout: 90000,
                         withCredentials: true
                     });
                     setResetStep('verify');
