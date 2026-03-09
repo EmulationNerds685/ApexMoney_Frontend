@@ -254,16 +254,12 @@ export const Signup = () => {
             
             if (err.code === 'ECONNABORTED') {
                 errorMessage = 'Request timed out. Please check your internet connection and try again.';
-            } else if (err.response?.status === 404) {
-                errorMessage = err.response?.data?.message || 'User not found.';
-            } else if (err.response?.status === 400) {
-                errorMessage = err.response?.data?.message || 'Invalid input. Please check your data.';
-            } else if (err.response?.status === 500) {
-                errorMessage = 'Server error. Please try again later.';
             } else if (err.message === 'Network Error') {
                 errorMessage = 'Network error. Please check your internet connection.';
+            } else if (err.response?.data?.message) {
+                errorMessage = err.response.data.message;
             } else {
-                errorMessage = err.response?.data?.message || err.message || 'An error occurred.';
+                errorMessage = err.message || 'An error occurred.';
             }
             
             setError(errorMessage);
