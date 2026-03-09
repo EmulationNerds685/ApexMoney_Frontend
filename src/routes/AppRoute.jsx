@@ -12,6 +12,8 @@ import Features from '../HomePage_Components/Features';
 import PremiumFeatures from '../pages/PremiumFeatures';
 import Subscribe from '../pages/Subscribe';
 import PlanDetails from '../pages/PlanDetails';
+import ProtectedRoute from './ProtectedRoute';
+
 function AppRoute() {
   return (
     <Routes>
@@ -25,9 +27,9 @@ function AppRoute() {
         <Route path="/plans" element={<PlanDetails />} />
         <Route path="/signup" element={<Subscribe />} />
       </Route>
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/expense" element={<AddExpenseForm />} />
-      <Route path="/income" element={<AddIncomeForm />} />
+      <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+      <Route path="/expense" element={<ProtectedRoute><AddExpenseForm /></ProtectedRoute>} />
+      <Route path="/income" element={<ProtectedRoute><AddIncomeForm /></ProtectedRoute>} />
     </Routes>
   );
 }

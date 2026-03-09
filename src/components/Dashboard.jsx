@@ -41,15 +41,13 @@ const Dashboard = () => {
   const [selectedCurrency, setSelectedCurrency] = useState('INR');
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 768);
+
+  // Auth check is now handled by ProtectedRoute, so just wait for user to be available
   useEffect(() => {
-    if (!userLoading) {
-      if (!user) {
-        navigate('/');
-      } else {
-        setCheckingAuth(false);
-      }
+    if (user) {
+      setCheckingAuth(false);
     }
-  }, [user, userLoading, navigate]);
+  }, [user]);
 
   useEffect(() => {
     if (user) fetchData();
