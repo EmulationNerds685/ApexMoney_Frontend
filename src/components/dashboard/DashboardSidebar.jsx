@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, TrendingUp, TrendingDown, Target, Brain, CreditCard, FileDown, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, TrendingUp, TrendingDown, Target, Brain, CreditCard, FileDown, LogOut, Menu, X, Settings } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
 
@@ -18,6 +18,7 @@ const DashboardSidebar = ({ isOpen, setIsOpen, activeTab, handleTabChange }) => 
     { key: 'insights', label: 'AI Insights', icon: Brain },
     { key: 'subscriptions', label: 'Subscriptions', icon: CreditCard },
     { key: 'reports', label: 'Export Reports', icon: FileDown },
+    { key: 'settings', label: 'Settings', icon: Settings },
   ];
   useEffect(() => {
     const handleResize = () => {
@@ -97,8 +98,8 @@ const DashboardSidebar = ({ isOpen, setIsOpen, activeTab, handleTabChange }) => 
                       }
                     }}
                     className={`py-2 px-4 rounded-lg text-left transition flex items-center gap-3 ${activeTab === item.key
-                        ? 'bg-white text-indigo-600 font-semibold'
-                        : 'hover:bg-indigo-500'
+                      ? 'bg-white text-indigo-600 font-semibold'
+                      : 'hover:bg-indigo-500'
                       }`}
                   >
                     <item.icon size={18} />
