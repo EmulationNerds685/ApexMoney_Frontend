@@ -19,6 +19,7 @@ import ReportExport from './dashboard/ReportExport';
 import FinancialGoals from './goals/FinancialGoals';
 import SmartInsights from './ai/SmartInsights';
 import SubscriptionTracker from './subscriptions/SubscriptionTracker';
+import Settings from './Settings';
 import { convertCurrency } from '../utils/currencyConversion';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title);
@@ -239,6 +240,8 @@ const Dashboard = () => {
         return <SubscriptionTracker userId={user._id} />;
       case 'reports':
         return <ReportExport expenses={expenses} incomes={incomes} user={user} userCurrency={selectedCurrency} />;
+      case 'settings':
+        return <Settings />;
       case 'income':
         return <div className="bg-white p-6 rounded-2xl shadow-lg h-[50vh]"><h2 className="text-2xl font-bold text-gray-700 mb-6">Income Data</h2><Line data={lineData} /></div>;
       case 'expense':
