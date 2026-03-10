@@ -55,7 +55,7 @@ export function AddIncomeForm() {
         ...formData,
         amount: parseFloat(formData.amount),
         tags,
-      });
+      }, { withCredentials: true });
 
       if (response.data) {
 

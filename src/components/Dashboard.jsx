@@ -84,8 +84,8 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const [expenseRes, incomeRes] = await Promise.all([
-        axios.get(`${import.meta.env.VITE_BACKENDURL}/expense/get?userId=${user._id}`),
-        axios.get(`${import.meta.env.VITE_BACKENDURL}/income/get?userId=${user._id}`),
+        axios.get(`${import.meta.env.VITE_BACKENDURL}/expense/get?userId=${user._id}`, { withCredentials: true }),
+        axios.get(`${import.meta.env.VITE_BACKENDURL}/income/get?userId=${user._id}`, { withCredentials: true }),
       ]);
       const expensesData = Array.isArray(expenseRes.data)
         ? expenseRes.data
@@ -115,7 +115,7 @@ const Dashboard = () => {
           <button
             className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg"
             onClick={() => {
-              const promise = axios.delete(`${import.meta.env.VITE_BACKENDURL}/${type}/delete/${id}`);
+              const promise = axios.delete(`${import.meta.env.VITE_BACKENDURL}/${type}/delete/${id}`, { withCredentials: true });
               toast.promise(promise, {
                 loading: `Deleting ${type}...`,
                 success: () => {
@@ -141,7 +141,7 @@ const Dashboard = () => {
   };
 
   const handleUpdate = (type, data) => {
-    const promise = axios.put(`${import.meta.env.VITE_BACKENDURL}/${type}/update/${data._id}`, data);
+    const promise = axios.put(`${import.meta.env.VITE_BACKENDURL}/${type}/update/${data._id}`, data, { withCredentials: true });
 
     toast.promise(promise, {
       loading: `Updating ${type}...`,

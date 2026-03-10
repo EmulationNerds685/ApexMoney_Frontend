@@ -121,14 +121,16 @@ export function AddExpenseForm({ expenseToEdit, onFormSubmit, onCancelEdit }) {
 
         response = await axios.put(
           `${backend}/expense/update/${formData._id}`,
-          dataToSubmit
+          dataToSubmit,
+          { withCredentials: true }
         );
         setToastMessage("Your expense has been updated.");
       } else {
 
         response = await axios.post(
           `${backend}/expense/add`,
-          dataToSubmit
+          dataToSubmit,
+          { withCredentials: true }
         );
         setToastMessage("Your expense has been saved.");
       }
