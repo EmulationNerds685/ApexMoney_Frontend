@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, Trash2, X } from 'lucide-react';
 import axios from 'axios';
 import { useUser } from '../../context/UserContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 const Settings = () => {
@@ -80,6 +80,33 @@ const Settings = () => {
               Delete Account
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* Legal Links Card */}
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden mt-6">
+        <div className="px-6 py-5 border-b border-gray-100">
+          <h2 className="text-lg font-semibold text-gray-800">Legal</h2>
+        </div>
+        <div className="p-6 flex flex-col sm:flex-row gap-4">
+          <Link
+            to="/privacy-policy"
+            className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-medium transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Privacy Policy
+          </Link>
+          <Link
+            to="/terms-of-service"
+            className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-medium transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            Terms of Service
+          </Link>
         </div>
       </div>
 
