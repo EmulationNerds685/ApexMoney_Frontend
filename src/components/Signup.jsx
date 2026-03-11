@@ -499,13 +499,12 @@ export const Signup = () => {
                                 ) : submitText}
                             </button>
 
-                            {/* Terms of Service (signup only) */}
                             {!isForgotPassword && !isLoginView && (
                                 <p className="text-xs text-center text-gray-400 mt-2">
                                     By creating an account, you agree to our{' '}
-                                    <a href="#" className="text-purple-600 hover:underline">Terms of Service</a>
+                                    <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline">Terms of Service</a>
                                     {' '}and{' '}
-                                    <a href="#" className="text-purple-600 hover:underline">Privacy Policy</a>.
+                                    <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline">Privacy Policy</a>.
                                 </p>
                             )}
                         </form>
@@ -545,9 +544,14 @@ export const Signup = () => {
                 </div>
 
                 {/* ── Footer ── */}
-                <p className="text-center text-xs text-gray-400 mt-6">
-                    © {new Date().getFullYear()} ApexMoney. All rights reserved.
-                </p>
+                <div className="text-center text-xs text-gray-400 mt-6 space-y-1">
+                    <p>© {new Date().getFullYear()} ApexMoney. All rights reserved.</p>
+                    <p>
+                        <a href="/privacy-policy" className="text-purple-500 hover:underline">Privacy Policy</a>
+                        {' · '}
+                        <a href="/terms-of-service" className="text-purple-500 hover:underline">Terms of Service</a>
+                    </p>
+                </div>
             </div>
 
             {/* ── Inline keyframe animation ── */}

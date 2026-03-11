@@ -12,6 +12,8 @@ import Features from '../HomePage_Components/Features';
 import PremiumFeatures from '../pages/PremiumFeatures';
 import Subscribe from '../pages/Subscribe';
 import PlanDetails from '../pages/PlanDetails';
+import PrivacyPolicy from '../pages/PrivacyPolicy';
+import TermsOfService from '../pages/TermsOfService';
 import ProtectedRoute from './ProtectedRoute';
 
 function AppRoute() {
@@ -26,6 +28,8 @@ function AppRoute() {
         <Route path="/signup/login" element={<Signup />} />
         <Route path="/plans" element={<PlanDetails />} />
         <Route path="/signup" element={<Subscribe />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
       </Route>
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/expense" element={<ProtectedRoute><AddExpenseForm /></ProtectedRoute>} />
