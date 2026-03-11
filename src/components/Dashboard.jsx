@@ -19,6 +19,7 @@ import ReportExport from './dashboard/ReportExport';
 import FinancialGoals from './goals/FinancialGoals';
 import SmartInsights from './ai/SmartInsights';
 import SubscriptionTracker from './subscriptions/SubscriptionTracker';
+import Settings from './dashboard/Settings';
 import { convertCurrency } from '../utils/currencyConversion';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title);
@@ -243,6 +244,8 @@ const Dashboard = () => {
         return <div className="bg-white p-6 rounded-2xl shadow-lg h-[50vh]"><h2 className="text-2xl font-bold text-gray-700 mb-6">Income Data</h2><Line data={lineData} /></div>;
       case 'expense':
         return <div className="bg-white p-6 rounded-2xl shadow-lg h-[50vh]"><h2 className="text-2xl font-bold text-gray-700 mb-6">Expense Data</h2><Bar data={barData} /></div>;
+      case 'settings':
+        return <Settings />;
       default:
         return null;
     }
