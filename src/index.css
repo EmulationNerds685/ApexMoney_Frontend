@@ -164,6 +164,46 @@
   }
 }
 
+/* ===== Mobile Native App Feel ===== */
+
+/* Safe area handling for notched devices */
+html {
+  height: 100%;
+  /* Extend content into safe areas, then handle with padding */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);
+}
+
+/* Disable pull-to-refresh and overscroll bounce */
+html, body {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent text selection on interactive elements (native feel) */
+button, a, nav, [role="button"] {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Minimum touch target size (44px per Apple HIG) */
+button, a, input, select, textarea {
+  min-height: 44px;
+}
+
+/* Smooth scrollable containers */
+.mobile-scroll {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Bottom nav safe spacing utility */
+.pb-safe-bottom {
+  padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;

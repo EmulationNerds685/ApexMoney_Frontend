@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, lazy, Suspense } from 'react';
 import axios from 'axios';
 import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
@@ -15,14 +15,20 @@ import ExpenseList from './dashboard/ExpenseList';
 import IncomeList from './dashboard/IncomeList';
 import EditExpenseModal from './dashboard/EditExpenseModal';
 import EditIncomeModal from './dashboard/EditIncomeModal';
-import ReportExport from './dashboard/ReportExport';
-import FinancialGoals from './goals/FinancialGoals';
-import SmartInsights from './ai/SmartInsights';
-import SubscriptionTracker from './subscriptions/SubscriptionTracker';
-import Settings from './dashboard/Settings';
 import { convertCurrency } from '../utils/currencyConversion';
 import AmbientBackground from './AmbientBackground';
 import { useTheme } from './ThemeProvider';
+import { useIsMobile } from '../utils/usePlatform';
+import BottomNav from './mobile/BottomNav';
+import TransactionsScreen from './mobile/TransactionsScreen';
+import ProfileScreen from './mobile/ProfileScreen';
+
+// Lazy load heavy components
+const ReportExport = lazy(() => import('./dashboard/ReportExport'));
+const FinancialGoals = lazy(() => import('./goals/FinancialGoals'));
+const SmartInsights = lazy(() => import('./ai/SmartInsights'));
+const SubscriptionTracker = lazy(() => import('./subscriptions/SubscriptionTracker'));
+const Settings = lazy(() => import('./dashboard/Settings'));
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title);
 
@@ -32,10 +38,17 @@ const LoadingSpinner = () => (
   </div>
 );
 
+const LazyFallback = () => (
+  <div className="flex justify-center items-center py-20">
+    <div className="animate-spin rounded-full h-10 w-10 border-t-3 border-b-3 border-indigo-600 dark:border-amber-500"></div>
+  </div>
+);
+
 const Dashboard = () => {
   const { user, loading: userLoading } = useUser();
   const { theme } = useTheme();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [expenses, setExpenses] = useState([]);
   const [incomes, setIncomes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -200,12 +213,25 @@ const Dashboard = () => {
     }],
   }), [incomes, selectedCurrency, isDark]);
 
+  // Handle mobile bottom nav tab changes
+  const handleMobileTabChange = (tab) => {
+    if (tab === 'transactions') {
+      setActiveTab('transactions');
+    } else if (tab === 'profile') {
+      setActiveTab('profile');
+    } else if (tab === 'insights') {
+      setActiveTab('insights');
+    } else {
+      setActiveTab('total');
+    }
+  };
+
   if (checkingAuth || loading || userLoading) return <LoadingSpinner />;
 
   if (!user) return null;
 
   const renderContent = () => {
-    if (expenses.length === 0 && incomes.length === 0) {
+    if (expenses.length === 0 && incomes.length === 0 && activeTab === 'total') {
       return <WelcomeEmptyState user={user} handleTabChange={setActiveTab} />;
     }
 
@@ -221,6 +247,22 @@ const Dashboard = () => {
             totalExpense={totalExpense}
             userCurrency={selectedCurrency}
             onCurrencyChange={handleCurrencyChange}
+          />
+        );
+      case 'transactions':
+        return (
+          <TransactionsScreen
+            expenses={expenses}
+            incomes={incomes}
+            totalExpense={totalExpense}
+            totalIncome={totalIncome}
+            userCurrency={selectedCurrency}
+            onEditExpense={setEditingExpense}
+            onEditIncome={setEditingIncome}
+            onDeleteExpense={(id) => handleDelete('expense', id)}
+            onDeleteIncome={(id) => handleDelete('income', id)}
+            ExpenseListComponent={ExpenseList}
+            IncomeListComponent={IncomeList}
           />
         );
       case 'expenseList':
@@ -244,24 +286,75 @@ const Dashboard = () => {
           />
         );
       case 'goals':
-        return <FinancialGoals userId={user._id} />;
+        return <Suspense fallback={<LazyFallback />}><FinancialGoals userId={user._id} /></Suspense>;
       case 'insights':
-        return <SmartInsights userId={user._id} />;
+        return <Suspense fallback={<LazyFallback />}><SmartInsights userId={user._id} /></Suspense>;
       case 'subscriptions':
-        return <SubscriptionTracker userId={user._id} />;
+        return <Suspense fallback={<LazyFallback />}><SubscriptionTracker userId={user._id} /></Suspense>;
       case 'reports':
-        return <ReportExport expenses={expenses} incomes={incomes} user={user} userCurrency={selectedCurrency} />;
+        return <Suspense fallback={<LazyFallback />}><ReportExport expenses={expenses} incomes={incomes} user={user} userCurrency={selectedCurrency} /></Suspense>;
+      case 'profile':
+        return <ProfileScreen onNavigate={setActiveTab} />;
       case 'income':
         return <div className="bg-white dark:bg-gray-800/80 p-6 rounded-2xl shadow-lg h-[50vh]"><h2 className="text-2xl font-bold text-gray-700 dark:text-gray-200 mb-6">Income Data</h2><Line data={lineData} /></div>;
       case 'expense':
         return <div className="bg-white dark:bg-gray-800/80 p-6 rounded-2xl shadow-lg h-[50vh]"><h2 className="text-2xl font-bold text-gray-700 dark:text-gray-200 mb-6">Expense Data</h2><Bar data={barData} /></div>;
       case 'settings':
-        return <Settings />;
+        return <Suspense fallback={<LazyFallback />}><Settings /></Suspense>;
       default:
         return null;
     }
   };
 
+  // ===== MOBILE LAYOUT =====
+  if (isMobile) {
+    return (
+      <div className="flex flex-col min-h-screen bg-slate-100 dark:bg-[#0f0e17] font-sans relative">
+        <AmbientBackground />
+        <Toaster position="top-center" reverseOrder={false} />
+
+        {/* Mobile Header */}
+        <header
+          className="sticky top-0 z-30 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/5"
+          style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+        >
+          <div className="flex items-center justify-between px-4 h-14">
+            <h1 className="text-lg font-bold text-indigo-600 dark:text-amber-400">ApexMoney</h1>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-amber-500/20 flex items-center justify-center text-sm font-bold text-indigo-600 dark:text-amber-400">
+                {(user?.name || user?.email || '?')[0].toUpperCase()}
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Scrollable Content */}
+        <main className="flex-1 overflow-y-auto mobile-scroll pb-safe-bottom relative" style={{ zIndex: 2 }}>
+          <div className="px-3 pt-4 pb-4">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.2 }}
+              >
+                {renderContent()}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </main>
+
+        {/* Bottom Navigation */}
+        <BottomNav activeTab={activeTab} onTabChange={handleMobileTabChange} />
+
+        {editingExpense && <EditExpenseModal expense={editingExpense} onUpdate={(data) => handleUpdate('expense', data)} onCancel={() => setEditingExpense(null)} />}
+        {editingIncome && <EditIncomeModal income={editingIncome} onUpdate={(data) => handleUpdate('income', data)} onCancel={() => setEditingIncome(null)} />}
+      </div>
+    );
+  }
+
+  // ===== DESKTOP LAYOUT (unchanged) =====
   return (
     <div className="flex min-h-screen bg-slate-100 dark:bg-[#0f0e17] font-sans relative">
       <AmbientBackground />

@@ -23,3 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# Capacitor Android build artifacts
+android/app/build/
+android/.gradle/
